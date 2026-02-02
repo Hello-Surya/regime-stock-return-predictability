@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.venv-*/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Data (never commit WRDS / CRSP)
+data/raw/
+data/interim/
+data/processed/
+
+# Results (choose what to commit)
+results/**/*
+!results/README.md
+!results/tables/
+!results/figures/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# LaTeX build
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
+paper/*.toc
+paper/build/

@@ -1,0 +1,8 @@
+regime:
+  variable: "VIX"
+  n_regimes: 2
+  method: "rolling_median"
+  lookback: "expanding"     # rolling median computed using all history up to t
+  labels: ["LOW", "HIGH"]
+  rule: "HIGH if vix_t > median_up_to_t else LOW"
+  info_set: "up_to_t_only"

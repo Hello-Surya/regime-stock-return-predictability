@@ -1,0 +1,15 @@
+evaluation:
+  scheme: "expanding_window_oos"
+  time_cv:
+    n_folds: 5
+    fold_scheme: "forward_chaining"
+  oos:
+    start_train: "1990-01-31"
+    start_test: "2000-01-31"
+    end: "2025-12-31"
+  economic_value:
+    portfolio: "decile_10_1"
+    rebalance: "monthly"
+    weighting: ["EW", "VW"]
+    tx_costs_bps_one_way: [0, 50]
+    turnover: true
