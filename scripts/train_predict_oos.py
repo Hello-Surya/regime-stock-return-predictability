@@ -1,4 +1,4 @@
-"""OOS training entry point; use run_single_stock.py for the Milestone 1 validation path."""
+"""OOS training entry point; use run_single_stock.py for the current validation path."""
 from __future__ import annotations
 
 

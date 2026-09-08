@@ -1,4 +1,4 @@
-"""Portfolio construction entry point reserved for the cross-sectional results milestone."""
+"""Portfolio construction entry point reserved for the cross-sectional results stage."""
 from __future__ import annotations
 
 

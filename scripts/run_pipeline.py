@@ -15,7 +15,7 @@ def main() -> int:
     root = Path(__file__).resolve().parents[1]
     if args.synthetic:
         return subprocess.call([sys.executable, str(root / "scripts" / "run_single_stock.py"), "--synthetic", "--ticker", args.ticker])
-    print("Real-data orchestration is completed in Milestone 2 and later milestones.")
+    print("Real-data orchestration is available through the current empirical pipeline.")
     return 2
 
 

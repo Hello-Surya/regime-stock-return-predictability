@@ -34,17 +34,12 @@ def main() -> int:
         return 0
 
     if not args.quick:
-        print("The complete production run requires the Compustat/CCM book-to-market milestones.")
+        print("The complete production run requires the Compustat/CCM book-to-market construction stage.")
         print("For the current real preliminary baseline use --quick.")
         return 2
 
     try:
-        artifacts = run_wrds_single_stock(
-            REPO_ROOT,
-            ticker=args.ticker,
-            quick=True,
-            refresh=args.refresh,
-        )
+        artifacts = run_wrds_single_stock(REPO_ROOT, ticker=args.ticker, quick=True, refresh=args.refresh)
     except Exception as exc:
         print(f"Research run failed: {exc}")
         return 1
