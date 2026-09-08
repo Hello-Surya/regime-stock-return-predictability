@@ -1,1 +1,1 @@
-"""Regime labeling modules for the fixed VIX-based approach."""
+"""Regimes utilities for the rdsrp research package."""

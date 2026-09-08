@@ -1,1 +1,1 @@
-"""Evaluation submodules: OOS splits, metrics, OOS forecasting logic."""
+"""Eval utilities for the rdsrp research package."""

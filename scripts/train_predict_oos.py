@@ -1,10 +1,11 @@
-"""Script to train models and generate OOS predictions."""
+"""OOS training entry point; use run_single_stock.py for the Milestone 1 validation path."""
 from __future__ import annotations
 
 
-def main() -> None:
-    raise SystemExit("Stub: implement OOS training and prediction here.")
+def main() -> int:
+    print("Use: python scripts/run_single_stock.py --synthetic --ticker STK001")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

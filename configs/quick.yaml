@@ -1,0 +1,43 @@
+run:
+  mode: "quick"
+  random_state: 42
+  synthetic:
+    n_stocks: 40
+    n_months: 54
+    oos_months: 12
+  model_parameters:
+    elastic_net:
+      alpha: 0.001
+      l1_ratio: 0.5
+      max_iter: 10000
+    xgboost:
+      n_estimators: 60
+      max_depth: 2
+      learning_rate: 0.05
+      subsample: 0.8
+      colsample_bytree: 0.8
+      n_jobs: 1
+  real:
+    crsp_start: "2012-01-01"
+    crsp_end: "2025-12-31"
+    vix_history_start: "1990-01-01"
+    oos_start: "2019-01-31"
+    top_n_by_market_cap: 300
+    universe_formation_date: "2012-01-31"
+    min_price: 5.0
+    predictors: ["log_me", "mom_12_2"]
+    min_train_months: 48
+    retrain_every_months: 3
+    xgboost_n_jobs: 4
+    tuning:
+      n_folds: 3
+      min_train_months: 36
+      elastic_net:
+        alpha: [0.0001, 0.001, 0.01]
+        l1_ratio: [0.1, 0.5, 0.9]
+      xgboost:
+        n_estimators: [80]
+        max_depth: [2, 3]
+        learning_rate: [0.03, 0.08]
+        subsample: [0.8]
+        colsample_bytree: [0.8]

@@ -1,29 +1,36 @@
-# Python
-__pycache__/
-*.pyc
 .venv/
-.venv-*/
-.mypy_cache/
+venv/
+__pycache__/
+*.py[cod]
 .pytest_cache/
+.mypy_cache/
 .ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+.env
+.env.*
+.pgpass
+*.pem
+*.key
+.vscode/settings.json
 
-# Data (never commit WRDS / CRSP)
-data/raw/
-data/interim/
-data/processed/
+data/raw/*
+data/interim/*
+data/processed/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
 
-# Results (choose what to commit)
-results/**/*
-!results/README.md
-!results/tables/
-!results/figures/
-
-# OS/editor
-.DS_Store
-Thumbs.db
-.vscode/
-
-# LaTeX build
+results/preliminary/*
+results/production/*
+results/synthetic_validation/*
+!results/preliminary/.gitkeep
+!results/production/.gitkeep
+!results/synthetic_validation/.gitkeep
+# LaTeX build artifacts
 paper/*.aux
 paper/*.bbl
 paper/*.blg
@@ -33,4 +40,6 @@ paper/*.log
 paper/*.out
 paper/*.synctex.gz
 paper/*.toc
+paper/*.pdf
 paper/build/
+

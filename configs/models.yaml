@@ -4,7 +4,6 @@ models:
     objective: "regression"
     tuning:
       method: "time_cv"
-      # stub grid; final values live here so they are frozen & auditable
       param_grid:
         alpha: [0.0001, 0.001, 0.01, 0.1]
         l1_ratio: [0.1, 0.5, 0.9]

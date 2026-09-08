@@ -4,7 +4,6 @@ universe:
   market: "US"
   exchanges: ["NYSE", "AMEX", "NASDAQ"]
   shrcd: [10, 11]
-  # store weights for VW portfolios (e.g., lagged ME); exact construction in code, not changed here
   weighting:
     vw_weight_col: "me_lag"
 target:

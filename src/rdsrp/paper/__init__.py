@@ -1,1 +1,1 @@
-"""Paper-related artifact generation: tables and figures."""
+"""Paper utilities for the rdsrp research package."""

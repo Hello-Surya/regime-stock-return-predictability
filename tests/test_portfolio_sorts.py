@@ -1,7 +1,13 @@
-def test_portfolio_sorts():
-    import pandas as pd
-    from rdsrp.portfolios.sorts import decile_long_short
+import pandas as pd
 
-    preds = pd.DataFrame()
-    res = decile_long_short(preds)
-    assert res.empty
+from rdsrp.portfolios.sorts import assign_deciles
+
+
+def test_prediction_deciles_are_ordered() -> None:
+    df = pd.DataFrame({
+        "date": pd.Timestamp("2020-01-31"),
+        "prediction": list(range(20)),
+    })
+    out = assign_deciles(df)
+    assert out.loc[out["prediction"].idxmin(), "decile"] == 1
+    assert out.loc[out["prediction"].idxmax(), "decile"] == 10

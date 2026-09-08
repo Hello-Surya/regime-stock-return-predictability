@@ -1,10 +1,11 @@
-"""Script to construct decile portfolios and compute returns."""
+"""Portfolio construction entry point reserved for the cross-sectional results milestone."""
 from __future__ import annotations
 
 
-def main() -> None:
-    raise SystemExit("Stub: implement portfolio construction here.")
+def main() -> int:
+    print("Cross-sectional portfolio construction is scheduled after single-stock OOS validation.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

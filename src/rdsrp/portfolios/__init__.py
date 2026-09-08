@@ -1,1 +1,1 @@
-"""Portfolio construction for decile sorts, turnover, and transaction costs."""
+"""Portfolios utilities for the rdsrp research package."""

@@ -1,1 +1,1 @@
-"""Utility submodules: date handling, file IO, checks, serialization."""
+"""Utils utilities for the rdsrp research package."""

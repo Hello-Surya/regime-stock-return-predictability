@@ -1,1 +1,1 @@
-"""Model definitions and tuning for Elastic Net and XGBoost."""
+"""Models utilities for the rdsrp research package."""

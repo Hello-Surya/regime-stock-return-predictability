@@ -1,2 +1,31 @@
 \section{Data}
-% Describe the CRSP and VIX data.
+
+\subsection{CRSP monthly stock data}
+
+The preliminary empirical implementation uses monthly U.S. common-stock data obtained through WRDS from the current CRSP CIZ monthly stock file, \texttt{crsp.msf\_v2}. The common-stock universe is restricted to ordinary common shares corresponding to the CRSP common-share classifications and to securities listed on the NYSE, AMEX, and NASDAQ. Market equity is constructed from price and shares outstanding using the CRSP units supplied by the current monthly file.
+
+To make the preliminary run computationally manageable on a local research workstation, the quick-run sample uses a fixed reduced universe. The universe is formed from the 300 largest eligible common stocks by market equity on January 31, 2012, using only information available at that formation date. The selected stock is retained explicitly. Complete subsequent histories are then pulled for the fixed set of securities. This construction avoids selecting the quick-run universe using future month-by-month membership information.
+
+A \$5 price screen is applied at feature month $t$ after the full return history required to construct the next-month target has been assembled. This ordering prevents the price realized at $t+1$ from determining whether the observation at $t$ survives the screen. The complete production sample will subsequently expand beyond this computationally reduced universe and will finalize delisting-return treatment and other universe diagnostics.
+
+\subsection{Predictors and target}
+
+The current preliminary predictor set contains two characteristics:
+\begin{enumerate}
+    \item log market equity, which captures firm size; and
+    \item momentum over months $t-12$ through $t-2$.
+\end{enumerate}
+
+The target is the stock return in the next calendar month, $r_{i,t+1}$. Feature construction requires actual calendar-month adjacency rather than relying only on row order. Consequently, a gap in a security's monthly history cannot cause a later return to be incorrectly treated as the next-month target or as part of a continuous momentum window.
+
+Book-to-market is intentionally excluded from the current preliminary feature set. It is introduced only after Compustat annual fundamentals and the CRSP/Compustat link are incorporated with the appropriate accounting-data timing convention.
+
+\subsection{VIX data and volatility regimes}
+
+Market volatility is measured using daily Cboe VIX history. The data pipeline first attempts to resolve the authoritative VIX series available through WRDS and otherwise uses Cboe's official historical VIX data as a documented fallback. Daily observations are converted to a monthly series by taking the final observed VIX close in each calendar month.
+
+For each month $t$, the volatility threshold is the expanding median of monthly VIX observations from the beginning of the available history through month $t$. A month is classified as HIGH when the contemporaneous VIX exceeds this expanding median and LOW otherwise. Because the threshold uses only observations through $t$, future volatility information does not enter the regime assigned to the prediction for $t+1$.
+
+\subsection{Preliminary out-of-sample sample}
+
+The current single-stock validation produces 83 AAPL out-of-sample prediction months from January 2019 through November 2025. Of these observations, 42 are classified as HIGH-VIX months and 41 as LOW-VIX months. These observations are used only to display and evaluate AAPL-specific predictions; the models themselves are trained on the broader historical reduced cross-section.

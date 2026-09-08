@@ -1,0 +1,27 @@
+run:
+  mode: "production"
+  random_state: 42
+  real:
+    crsp_start: "1990-01-01"
+    crsp_end: "2025-12-31"
+    vix_history_start: "1990-01-01"
+    oos_start: "2000-01-31"
+    top_n_by_market_cap: null
+    universe_formation_date: null
+    min_price: 5.0
+    predictors: ["log_me", "book_to_market", "mom_12_2"]
+    min_train_months: 60
+    retrain_every_months: 1
+    xgboost_n_jobs: 4
+    tuning:
+      n_folds: 5
+      min_train_months: 60
+      elastic_net:
+        alpha: [0.0001, 0.001, 0.01, 0.1]
+        l1_ratio: [0.1, 0.5, 0.9]
+      xgboost:
+        n_estimators: [200, 500]
+        max_depth: [2, 3, 4]
+        learning_rate: [0.01, 0.05, 0.1]
+        subsample: [0.7, 1.0]
+        colsample_bytree: [0.7, 1.0]

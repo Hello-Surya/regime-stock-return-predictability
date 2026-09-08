@@ -1,3 +1,2 @@
-# latexmkrc: configuration for latexmk to build the paper
-$aux_dir = "build";
-$out_dir = "build";
+$pdf_mode = 1;
+$pdflatex = 'pdflatex -interaction=nonstopmode %O %S';

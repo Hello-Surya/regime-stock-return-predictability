@@ -1,2 +1,45 @@
 \section{Results}
-% Present out-of-sample results and model performance.
+
+\subsection{Preliminary single-stock out-of-sample validation}
+
+Table~\ref{tab:aapl-preliminary} reports the first real-data out-of-sample validation for AAPL. The sample contains 83 prediction months from January 2019 through November 2025. These results are generated from models trained on the historical reduced cross-section; they are not models estimated on AAPL alone.
+
+\begin{table}[htbp]
+\centering
+\caption{Preliminary AAPL out-of-sample forecast performance}
+\label{tab:aapl-preliminary}
+\begin{tabular}{llrrrrr}
+\hline
+Model & Regime & $N$ & RMSE & MAE & $R^2_{OOS}$ & Corr. \\
+\hline
+Elastic Net & Overall & 83 & 0.08096 & 0.06873 & -0.0274 & -0.2381 \\
+XGBoost     & Overall & 83 & 0.08052 & 0.06833 & -0.0162 & -0.1133 \\
+Elastic Net & HIGH    & 42 & 0.09445 & 0.08261 & -0.0132 & -0.2909 \\
+XGBoost     & HIGH    & 42 & 0.09414 & 0.08252 & -0.0067 & -0.1755 \\
+Elastic Net & LOW     & 41 & 0.06429 & 0.05451 & -0.0601 & -0.1169 \\
+XGBoost     & LOW     & 41 & 0.06362 & 0.05380 & -0.0384 & -0.0267 \\
+\hline
+\end{tabular}
+\end{table}
+
+Neither model produces positive out-of-sample $R^2$ relative to the expanding historical-mean benchmark. Overall $R^2_{OOS}$ is -0.0274 for Elastic Net and -0.0162 for XGBoost. Thus, in this preliminary AAPL validation, the historical-mean benchmark has lower squared forecast error than either machine-learning model. The result is useful because it demonstrates that the pipeline does not mechanically generate positive predictive performance when the data do not support it.
+
+At the same time, XGBoost provides a small but consistent improvement over Elastic Net. Its overall RMSE is 0.08052 compared with 0.08096 for Elastic Net, and its MAE is 0.06833 compared with 0.06873. XGBoost also has the less negative benchmark-relative OOS $R^2$ in both volatility regimes. These differences are modest and are not interpreted as evidence that nonlinearities are economically important at this stage.
+
+\subsection{Performance across volatility regimes}
+
+The regime-specific results show a preliminary difference in benchmark-relative performance. In HIGH-VIX months, Elastic Net and XGBoost produce OOS $R^2$ values of -0.0132 and -0.0067, respectively. In LOW-VIX months, the corresponding values are more negative at -0.0601 and -0.0384. Consequently, both models perform comparatively closer to the historical-mean benchmark during high-volatility months than during low-volatility months.
+
+This pattern is consistent with the research question but does not yet establish stronger return predictability in high-volatility regimes. All four regime-specific OOS $R^2$ values remain below zero, and the current exercise contains only 42 HIGH and 41 LOW AAPL observations. The appropriate interpretation is therefore that relative forecast performance is less weak in the HIGH-VIX regime in this preliminary single-stock validation.
+
+Raw forecast errors are larger in HIGH-VIX months. For XGBoost, RMSE is 0.09414 in HIGH-VIX months and 0.06362 in LOW-VIX months; Elastic Net shows a similar difference. This does not by itself imply that the models are comparatively worse during high volatility because realized stock-return dispersion is also greater in volatile periods. Benchmark-relative measures are therefore more informative for the regime comparison.
+
+\subsection{Additional diagnostics}
+
+The prediction-realization correlations are weak or negative. Overall correlations are -0.2381 for Elastic Net and -0.1133 for XGBoost. This limits any claim that the models track AAPL's month-to-month return variation. However, the models are estimated as cross-sectional return-prediction models, so single-stock time-series correlation is not the only relevant criterion. The next stage tests whether the predictions rank stocks cross-sectionally in a way that produces subsequent return spreads.
+
+Relative to a zero-return forecast, both models obtain positive diagnostic OOS $R^2$ values: approximately 0.0616 for Elastic Net and 0.0717 for XGBoost overall. This result indicates that the models contain some information relative to the simple zero forecast, while still failing to improve on the stronger expanding historical-mean benchmark.
+
+\subsection{Interpretation and current scope}
+
+The first empirical milestone supports three limited conclusions. First, the complete WRDS-based forecasting pipeline is operational and generates genuine out-of-sample predictions under explicit timing restrictions. Second, XGBoost modestly outperforms Elastic Net on forecast-error measures in the current AAPL validation. Third, benchmark-relative performance is less negative in HIGH-VIX months than in LOW-VIX months for both models. None of these findings is treated as formal evidence of economically valuable predictability until the cross-sectional portfolio and full-data analyses are completed.

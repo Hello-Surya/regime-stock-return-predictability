@@ -1,9 +1,7 @@
-# Centralized paths (local data ignored by git; results may be committed selectively)
 data:
   raw: "data/raw"
   interim: "data/interim"
   processed: "data/processed"
-
 results:
   root: "results"
   metrics: "results/metrics"

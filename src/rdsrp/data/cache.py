@@ -1,16 +1,17 @@
-"""Cache policy for derived datasets.
-
-This module defines canonical cache locations (raw/interim/processed).
-"""
+"""Parquet caching helpers for local research data."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
+import pandas as pd
 
 
-@dataclass(frozen=True)
-class DataPaths:
-    """Local data folders (ignored by git)."""
-    raw: Path
-    interim: Path
-    processed: Path
+def write_parquet_cache(df: pd.DataFrame, path: Path) -> Path:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    df.to_parquet(path, index=False)
+    return path
+
+
+def read_parquet_cache(path: Path) -> pd.DataFrame:
+    if not path.exists():
+        raise FileNotFoundError(path)
+    return pd.read_parquet(path)

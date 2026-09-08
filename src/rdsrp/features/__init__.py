@@ -1,1 +1,1 @@
-"""Feature construction and transforms for the modeling panel."""
+"""Features utilities for the rdsrp research package."""

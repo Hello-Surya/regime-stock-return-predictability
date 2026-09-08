@@ -1,15 +1,10 @@
-"""Decile portfolio construction and 10-1 long-short returns (EW and VW)."""
-from __future__ import annotations
-
 import pandas as pd
 
-
-def decile_long_short(
-    preds: pd.DataFrame,
-    ret_col: str = "ret_fwd",
-    pred_col: str = "pred",
-    weight_col: str | None = None,
-) -> pd.DataFrame:
-    """Compute monthly decile returns and 10-1 long-short series."""
-    # Stub
-    return pd.DataFrame()
+def assign_deciles(df: pd.DataFrame, prediction_col: str = "prediction", date_col: str = "date") -> pd.DataFrame:
+    out=df.copy()
+    def _rank(values: pd.Series) -> pd.Series:
+        valid=values.notna(); result=pd.Series(pd.NA,index=values.index,dtype="Int64")
+        if valid.sum()<10: return result
+        ranks=values.loc[valid].rank(method="first"); result.loc[valid]=(pd.qcut(ranks,10,labels=False).astype(int)+1).astype("Int64"); return result
+    out["decile"]=out.groupby(date_col,group_keys=False)[prediction_col].transform(_rank).astype("Int64")
+    return out

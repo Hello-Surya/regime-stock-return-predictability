@@ -1,6 +1,10 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "rdsrp"
-version = "0.1.0"
+version = "0.4.1"
 description = "Regime-Dependent Predictability of Stock Returns (CRSP monthly, VIX regimes, Elastic Net + XGBoost)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,6 +16,7 @@ dependencies = [
   "xgboost>=2.0",
   "pyarrow>=15.0",
   "matplotlib>=3.8",
+  "wrds>=3.2",
 ]
 
 [project.optional-dependencies]
@@ -23,6 +28,9 @@ dev = [
   "pre-commit>=3.7",
   "types-PyYAML>=6.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.black]
 line-length = 100
@@ -49,3 +57,4 @@ disallow_any_generics = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
+pythonpath = ["src"]

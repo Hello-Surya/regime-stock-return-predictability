@@ -1,25 +1,19 @@
-"""Model interface for time-respecting training and prediction."""
+"""Model interfaces used by the expanding-window experiment."""
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 import numpy as np
-
 
 @dataclass
 class FitResult:
-    """Holds a fitted model and metadata."""
     model_name: str
-    params: dict
-
+    estimator: Any
+    params: dict[str, Any]
 
 class ModelSpec:
-    """Abstract interface for models used in the paper."""
     name: str
-
     def fit(self, X: np.ndarray, y: np.ndarray) -> FitResult:
-        """Fit on training data."""
         raise NotImplementedError
-
     def predict(self, fit: FitResult, X: np.ndarray) -> np.ndarray:
-        """Predict expected returns."""
-        raise NotImplementedError
+        return np.asarray(fit.estimator.predict(X), dtype=float)
