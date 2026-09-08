@@ -1,0 +1,11 @@
+stage,stock_month_observations
+Raw CRSP eligible observations,2140091
+Valid next-month target,2119550
+Price >= $5,1579850
+Valid size,1579850
+Valid momentum,1449200
+Matched CCM,1392321
+Valid book equity,1341110
+Valid book-to-market,1340823
+Complete baseline predictor set,1340823
+Complete predictors + target + regime,1340823

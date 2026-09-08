@@ -43,9 +43,22 @@ def build_features(crsp: pd.DataFrame) -> pd.DataFrame:
     df["shrout"] = pd.to_numeric(df["shrout"], errors="coerce")
     df["ret"] = pd.to_numeric(df["ret"], errors="coerce")
     df["market_equity"] = df["prc"] * df["shrout"]
-    df["log_me"] = np.log(df["market_equity"].where(df["market_equity"] > 0))
+    # Mask before taking logs rather than relying on a nullable-array ``where``.
+    # This keeps zero/nonpositive ME economically invalid without emitting a
+    # divide-by-zero warning from pandas' masked-array implementation.
+    positive_me = pd.to_numeric(df["market_equity"], errors="coerce")
+    df["log_me"] = np.nan
+    valid_me = positive_me.gt(0).fillna(False)
+    df.loc[valid_me, "log_me"] = np.log(positive_me.loc[valid_me].astype(float))
     pieces = [_calendar_safe_features(group) for _, group in df.groupby("permno", sort=False)]
     out = pd.concat(pieces, ignore_index=True) if pieces else df.copy()
+    # Backward-compatible synthetic/software-validation path. The real WRDS
+    # production pipeline does not pass book equity into this function; it
+    # constructs annual B/M later using CCM linkage, prior-December firm ME,
+    # and the June assignment convention.
     if "book_equity" in out.columns:
-        out["book_to_market"] = out["book_equity"] / out["market_equity"].replace(0, np.nan)
+        out["book_to_market"] = (
+            pd.to_numeric(out["book_equity"], errors="coerce")
+            / pd.to_numeric(out["market_equity"], errors="coerce").replace(0, np.nan)
+        )
     return out.sort_values(["permno", "date"]).reset_index(drop=True)

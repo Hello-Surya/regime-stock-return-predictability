@@ -60,3 +60,17 @@ def test_feature_month_price_screen_does_not_remove_future_target() -> None:
     screened = features[features["prc"] >= 5.0]
     assert len(screened) == 1
     assert screened.iloc[0]["next_month_return"] == -0.40
+
+
+def test_nonpositive_market_equity_has_missing_log_me() -> None:
+    raw = pd.DataFrame({
+        "permno": [1, 1],
+        "ticker": ["TEST", "TEST"],
+        "date": pd.to_datetime(["2020-01-31", "2020-02-29"]),
+        "ret": [0.01, 0.02],
+        "prc": [10.0, 10.0],
+        "shrout": [0.0, 100.0],
+    })
+    out = build_features(raw)
+    assert pd.isna(out.loc[0, "log_me"])
+    assert np.isclose(out.loc[1, "log_me"], np.log(1000.0))

@@ -1,0 +1,43 @@
+{
+  "accounting_timing": "fiscal-year-end calendar y-1 first eligible June y; active June y through May y+1",
+  "book_equity_and_me_dec_units": "USD millions",
+  "book_equity_construction": "SHE + deferred taxes/ITC - preferred stock; SHE=SEQ, else CEQ+PSTK, else AT-LT",
+  "book_to_market_denominator": "firm-level sum of prior-December CRSP ME across eligible linked PERMNOs",
+  "ccm_link_primary": [
+    "P",
+    "C"
+  ],
+  "ccm_link_types": [
+    "LC",
+    "LU"
+  ],
+  "ccm_source": "crsp.ccmxpf_lnkhist",
+  "compustat_extraction_start": "1987-01-01",
+  "compustat_source": "comp.funda",
+  "counts": {
+    "complete_predictor_rows": 1798891,
+    "final_panel_rows": 2140091,
+    "raw_ccm_rows": 123388,
+    "raw_compustat_rows": 386007,
+    "raw_crsp_rows_with_history": 2286549,
+    "unique_permnos": 18898,
+    "valid_book_to_market_rows": 1818006
+  },
+  "crsp_extraction_start": "1988-01-01",
+  "crsp_market_equity_units": "USD thousands",
+  "crsp_source": "crsp.msf_v2 (CIZ)",
+  "deferred_tax_hierarchy": "TXDITC, then TXDB+ITCB; explicit zero if all missing",
+  "git_commit_at_build": "81519840e7cb1815c4dc5fc9fc2af7182223bd02",
+  "git_working_tree_dirty": true,
+  "mode": "production",
+  "predictors": [
+    "log_me",
+    "book_to_market",
+    "mom_12_2"
+  ],
+  "preferred_stock_hierarchy": "PSTKRV, then PSTKL, then PSTK; explicit zero if all missing",
+  "research_sample_end": "2025-12-31",
+  "research_sample_start": "1990-01-01",
+  "timestamp_utc": "2026-09-08T17:33:38.709342+00:00",
+  "vix_source": "cboe_all.cboe"
+}

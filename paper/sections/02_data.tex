@@ -2,30 +2,58 @@
 
 \subsection{CRSP monthly stock data}
 
-The preliminary empirical implementation uses monthly U.S. common-stock data obtained through WRDS from the current CRSP CIZ monthly stock file, \texttt{crsp.msf\_v2}. The common-stock universe is restricted to ordinary common shares corresponding to the CRSP common-share classifications and to securities listed on the NYSE, AMEX, and NASDAQ. Market equity is constructed from price and shares outstanding using the CRSP units supplied by the current monthly file.
+The production data construction uses monthly U.S. common-stock data obtained through WRDS from the current CRSP CIZ monthly stock file, \texttt{crsp.msf\_v2}. The universe is restricted to U.S. ordinary common equity listed on the NYSE, AMEX, and NASDAQ using the available CIZ security classifications. The production research sample spans January 1990 through December 2025. Additional pre-sample CRSP history beginning in 1988 is retained during construction so that momentum and prior-December market equity are available at the start of the research sample.
 
-To make the preliminary run computationally manageable on a local research workstation, the quick-run sample uses a fixed reduced universe. The universe is formed from the 300 largest eligible common stocks by market equity on January 31, 2012, using only information available at that formation date. The selected stock is retained explicitly. Complete subsequent histories are then pulled for the fixed set of securities. This construction avoids selecting the quick-run universe using future month-by-month membership information.
+Price is normalized to its absolute value. Market equity is constructed as price times shares outstanding. Because CRSP shares outstanding are reported in thousands, this monthly market-equity variable is measured in thousands of U.S. dollars. Log market equity is defined only for strictly positive market equity. Lagged market equity refers to the previous actual calendar month rather than simply the previous row.
 
-A \$5 price screen is applied at feature month $t$ after the full return history required to construct the next-month target has been assembled. This ordering prevents the price realized at $t+1$ from determining whether the observation at $t$ survives the screen. The complete production sample will subsequently expand beyond this computationally reduced universe and will finalize delisting-return treatment and other universe diagnostics.
+A \$5 price screen is applied at feature month $t$ after the return history required for target construction has been assembled. This ordering ensures that the price realized at $t+1$ cannot determine whether the observation at $t$ survives the feature-month screen.
 
-\subsection{Predictors and target}
+\subsection{Compustat fundamentals and book equity}
 
-The current preliminary predictor set contains two characteristics:
-\begin{enumerate}
-    \item log market equity, which captures firm size; and
-    \item momentum over months $t-12$ through $t-2$.
-\end{enumerate}
+Annual accounting data are obtained from \texttt{comp.funda}. The production extraction uses standard industrial, consolidated, domestic-population annual data reported in U.S. dollars where the corresponding fields are available. Construction uses pre-sample Compustat history beginning in 1987.
 
-The target is the stock return in the next calendar month, $r_{i,t+1}$. Feature construction requires actual calendar-month adjacency rather than relying only on row order. Consequently, a gap in a security's monthly history cannot cause a later return to be incorrectly treated as the next-month target or as part of a continuous momentum window.
+Stockholders' equity is constructed using the hierarchy \texttt{SEQ}, then \texttt{CEQ + PSTK}, and then \texttt{AT - LT}. Preferred stock uses the hierarchy \texttt{PSTKRV}, then \texttt{PSTKL}, and then \texttt{PSTK}; when all preferred-stock fields are missing, preferred stock is explicitly set to zero. Deferred taxes and investment tax credit use \texttt{TXDITC}, with \texttt{TXDB + ITCB} as the fallback; when all such fields are missing, this component is explicitly set to zero.
 
-Book-to-market is intentionally excluded from the current preliminary feature set. It is introduced only after Compustat annual fundamentals and the CRSP/Compustat link are incorporated with the appropriate accounting-data timing convention.
+Book equity is therefore
+\[
+BE = SHE + DT - PS,
+\]
+where $SHE$ is stockholders' equity, $DT$ is deferred taxes and investment tax credit, and $PS$ is preferred stock. Nonpositive book equity is retained for data-lineage diagnostics but does not generate a valid baseline book-to-market characteristic.
+
+\subsection{CRSP/Compustat linkage}
+
+Compustat observations are linked to CRSP securities using the CRSP/Compustat Merged link-history table \texttt{crsp.ccmxpf\_lnkhist}. The baseline retains link types \texttt{LC} and \texttt{LU} and primary indicators \texttt{P} and \texttt{C}. A link must be effective on the Compustat fiscal-year-end date. Open-ended link dates are handled as open intervals on the missing side.
+
+Competing mappings are resolved deterministically before monthly assignment, prioritizing primary links and the accepted link types. The construction never merges Compustat to CRSP by ticker or company name.
+
+\subsection{Accounting timing and book-to-market}
+
+The baseline uses an explicit conservative June convention. For a Compustat fiscal-year end in calendar year $y-1$, the corresponding accounting characteristic first becomes eligible in June of year $y$ and remains active through May of year $y+1$. Accounting observations are therefore not forward-filled into months immediately following the fiscal-year-end date.
+
+For characteristic year $y$, book equity is paired with CRSP market equity from December $y-1$. CRSP market equity is converted from thousands of dollars to millions of dollars before it is combined with Compustat book equity, which is reported in millions.
+
+Where a firm has multiple eligible linked CRSP securities represented in the research universe, the December market-equity denominator is formed at the firm level by summing the required security-level market capitalizations. If a required linked security lacks its December market-equity observation, the denominator is treated as incomplete and book-to-market remains missing.
+
+The baseline characteristic is
+\[
+BM_{i,y} = \frac{BE_{i,y-1}}{ME^{Dec}_{i,y-1}}.
+\]
+A valid book-to-market observation requires strictly positive book equity and strictly positive, complete prior-December market equity. No winsorization or trimming is introduced during data construction.
+
+\subsection{Momentum and target}
+
+Momentum 12--2 compounds monthly stock returns from $t-12$ through $t-2$, excluding months $t$ and $t-1$. The target is the stock return in the next actual calendar month, $r_{i,t+1}$. Feature construction requires calendar adjacency; a gap in a security's history cannot cause a later observation to be treated as the next-month target or as part of a continuous momentum window.
 
 \subsection{VIX data and volatility regimes}
 
-Market volatility is measured using daily Cboe VIX history. The data pipeline first attempts to resolve the authoritative VIX series available through WRDS and otherwise uses Cboe's official historical VIX data as a documented fallback. Daily observations are converted to a monthly series by taking the final observed VIX close in each calendar month.
+Market volatility is measured using the Cboe VIX series resolved in the production build from \texttt{cboe\_all.cboe}. Daily observations are converted to monthly frequency using the final observed VIX close in each calendar month.
 
-For each month $t$, the volatility threshold is the expanding median of monthly VIX observations from the beginning of the available history through month $t$. A month is classified as HIGH when the contemporaneous VIX exceeds this expanding median and LOW otherwise. Because the threshold uses only observations through $t$, future volatility information does not enter the regime assigned to the prediction for $t+1$.
+For each month $t$, the volatility threshold is the expanding median of monthly VIX observations through $t$. A month is classified as HIGH when contemporaneous VIX exceeds this expanding median and LOW otherwise. Future volatility information therefore does not enter the regime assigned at the prediction date.
 
-\subsection{Preliminary out-of-sample sample}
+\subsection{Production panel coverage}
 
-The current single-stock validation produces 83 AAPL out-of-sample prediction months from January 2019 through November 2025. Of these observations, 42 are classified as HIGH-VIX months and 41 as LOW-VIX months. These observations are used only to display and evaluate AAPL-specific predictions; the models themselves are trained on the broader historical reduced cross-section.
+The validated production panel contains 2,140,091 stock-month observations across 18,898 PERMNOs from January 1990 through December 2025. Book-to-market is available for 1,818,006 stock-months, and 1,798,891 observations contain all three baseline predictors---log market equity, book-to-market, and momentum 12--2---before the sequential downstream eligibility filters. The final panel contains no duplicate PERMNO--date observations.
+
+After sequentially requiring a valid next-month target, a feature-month price of at least \$5, valid size and momentum, a valid CCM match, positive book equity, and valid book-to-market, 1,340,823 stock-month observations remain in the complete baseline sample flow.
+
+The empirical results reported elsewhere from the earlier preliminary analysis were generated before book-to-market was integrated and therefore use only size and momentum. They are retained as preliminary historical results rather than being reinterpreted as estimates from the completed three-predictor panel.

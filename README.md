@@ -4,39 +4,60 @@ Research software for testing whether next-month U.S. common-stock return predic
 
 ## Current Stage of the Project
 
-The project has reached the **preliminary real-data cross-sectional portfolio evaluation stage**.
+The project has reached the **complete baseline predictor data-construction stage**.
 
-The implemented research pipeline currently supports:
+The production data pipeline now constructs a leakage-safe monthly CRSP–Compustat–CCM panel containing the frozen baseline predictor set:
 
-- executable synthetic software validation;
-- live WRDS CRSP CIZ source discovery, extraction, normalization, caching, and validation;
-- fixed-universe cross-sectional model estimation and OOS prediction;
-- Cboe VIX regime construction using an expanding historical median;
-- time-respecting forward-chaining hyperparameter selection;
-- Elastic Net and XGBoost next-month return forecasts;
-- explicit training-feature and realized-target timing audits;
-- deterministic D1-D10 portfolio construction with safeguards against degenerate prediction cross-sections;
-- equal- and lagged-market-equity value-weighted portfolio returns;
-- overall and HIGH/LOW regime summaries;
-- monthly cross-sectional Spearman rank diagnostics;
-- automatically generated research tables, figures, and validation reports.
+- log market equity (size);
+- book-to-market; and
+- momentum 12–2.
 
-The current real empirical specification intentionally uses a **preliminary partial feature set** of size and momentum. Book-to-market is not fabricated; it will enter after the Compustat/CCM data-construction stage.
+The live production build resolves and uses:
 
-### Current Empirical Findings
+- CRSP monthly stock data: `crsp.msf_v2` (CIZ);
+- Compustat annual fundamentals: `comp.funda`;
+- CRSP/Compustat link history: `crsp.ccmxpf_lnkhist`; and
+- Cboe VIX: `cboe_all.cboe`.
 
-The cross-sectional OOS sample contains 83 formation months from January 2019 through November 2025, with 225 to 251 eligible stocks per month after the current screens.
+The production research panel spans January 1990 through December 2025 and contains 2,140,091 stock-month observations across 18,898 PERMNOs. It contains 1,818,006 stock-months with valid book-to-market and 1,798,891 stock-months with all three baseline predictors before the downstream price/target eligibility sequence. The final panel has zero duplicate `permno`/`date` rows.
 
-The tuned Elastic Net specification collapses to one identical forecast for every stock in every OOS month. Because it contains no usable within-month ranking information, all 83 Elastic Net month-groups are treated as non-sortable and no Elastic Net decile-return result is reported. This is a substantive null result for the current two-predictor regularized linear specification.
+After the sequential next-month-target, $5 feature-month price, size, momentum, CCM, book-equity, and book-to-market requirements, 1,340,823 stock-month observations remain in the complete baseline sample flow.
 
-XGBoost produces valid cross-sectional forecast dispersion in all 83 OOS months. Its average monthly Spearman rank correlation is slightly negative overall (-0.0101), so the current model does not show broad monotonic ranking ability across the full cross-section.
+### Accounting construction
 
-XGBoost equal-weighted D10-minus-D1 returns are economically close to zero overall (-0.017% per month). Value-weighted results are more positive: the overall spread averages approximately 0.708% per month. This value-weighted result is concentrated in LOW-VIX months, where the mean spread is approximately 1.432% per month, while the HIGH-VIX value-weighted spread is essentially zero. These are descriptive preliminary results and are not yet accompanied by formal HAC inference or transaction-cost adjustments.
+Book equity is formed from Compustat annual data using a documented fallback hierarchy. Stockholders' equity uses `SEQ`, then `CEQ + PSTK`, then `AT - LT`. Preferred stock uses `PSTKRV`, then `PSTKL`, then `PSTK`, with an explicit zero when all preferred-stock fields are missing. Deferred taxes and investment tax credit use `TXDITC`, then `TXDB + ITCB`, with an explicit zero when all such fields are missing.
 
-The earlier AAPL single-stock validation remains useful as a software and forecast-error check, but it is no longer the most advanced empirical stage of the project.
+CCM links are restricted to link types `LC` and `LU` and primary indicators `P` and `C`, and must be effective on the Compustat fiscal-year-end date. Duplicate or competing mappings are resolved deterministically before characteristics are assigned.
 
-### Next Stage
+For a fiscal-year end in calendar year y-1, the accounting characteristic first becomes eligible in June of year y and remains active through May of year y+1. Book equity is paired with firm-level CRSP market equity from December y-1. CRSP price-times-shares market equity is in USD thousands and is converted to USD millions for the book-to-market denominator so that units match Compustat.
 
-The next stage adds the full Compustat/CCM predictor construction, formal inference, additional portfolio diagnostics, turnover, and the frozen transaction-cost robustness specification of 0 and 50 basis points one way. The current regime results are treated as preliminary and may change materially once the complete predictor set is available.
+Nonpositive book equity, nonpositive December market equity, or an incomplete required December denominator does not produce a valid book-to-market observation.
 
-See `RESEARCH_RUN.md` for exact Windows/PowerShell commands and `docs/cross_sectional_portfolio_evaluation.md` for the cross-sectional design and validation rules.
+### Production validation
+
+The completed production build reports:
+
+- duplicate `permno`/`date` rows: 0;
+- valid size observations: 2,139,259;
+- valid momentum observations: 1,972,307;
+- valid book-to-market observations: 1,818,006;
+- all-three-predictor observations: 1,798,891;
+- median book-to-market: approximately 0.558;
+- 99.9th percentile book-to-market: approximately 11.60; and
+- book-to-market unit sanity check: pass.
+
+No winsorization is introduced by the data-construction pipeline.
+
+### Earlier Preliminary Empirical Results
+
+The existing single-stock and cross-sectional portfolio results remain **preliminary historical results from the earlier two-predictor specification** using size and momentum only.
+
+Those results must not be interpreted as estimates from the newly completed three-predictor panel. In particular, the previously reported Elastic Net forecast degeneracy and XGBoost portfolio diagnostics were generated before book-to-market was added.
+
+## Next Stage
+
+The next research stage is **full baseline model estimation using the validated three-predictor production panel**.
+
+That stage will rerun the frozen Elastic Net and XGBoost specifications with the complete predictor set under the existing time-respecting out-of-sample design. Formal portfolio inference, turnover, and the frozen transaction-cost robustness specification remain subsequent research tasks.
+
+See `RESEARCH_RUN.md` for Windows/PowerShell commands and `docs/data_sources.md` for the complete data-construction methodology.

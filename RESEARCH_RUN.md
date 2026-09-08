@@ -20,17 +20,17 @@ py -V:3.11 -m venv .venv
 
 Using `.venv\Scripts\python.exe` directly avoids PowerShell activation-policy issues.
 
-## Run the test suite
+## Run the complete test suite
 
 ```powershell
-.\.venv\Scripts\python.exe -m pytest
+.\.venv\Scripts\python.exe -m pytest -q
 ```
 
-The validated cross-sectional branch currently contains **38 software tests**. Unit tests do not require WRDS credentials.
+Unit and synthetic tests do not require WRDS credentials.
 
 ## Synthetic software validation
 
-This mode uses generated data only and is not an empirical research result:
+Synthetic data are used only for software validation and are not empirical research results:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_single_stock.py --synthetic --ticker STK001
@@ -38,40 +38,68 @@ This mode uses generated data only and is not an empirical research result:
 
 Outputs are written to `results\synthetic_validation\`.
 
-## WRDS connection validation
+## WRDS source validation
+
+General CRSP/VIX validation:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\test_wrds_connection.py
 ```
 
-The script securely authenticates through the normal WRDS Python workflow, resolves the current CRSP monthly source, pulls a tiny common-stock sample, discovers the Cboe VIX table, pulls a tiny VIX sample, and closes the connection cleanly.
+Compustat/CCM validation:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_accounting_sources.py
+```
+
+The validated production sources are `crsp.msf_v2`, `comp.funda`, `crsp.ccmxpf_lnkhist`, and `cboe_all.cboe`.
 
 Never place a WRDS password in Python source, YAML, Git, or chat.
 
-## Preliminary single-stock validation
+## Build the complete baseline predictor panel
 
-The earlier real-data validation can still be reproduced with:
+Quick construction:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\build_modeling_panel.py --quick
+```
+
+Production construction:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\build_modeling_panel.py --production
+```
+
+The quick and production modes use identical accounting, CCM, timing, unit, and B/M definitions. Quick mode only reduces computational scale.
+
+The production panel is stored locally at:
+
+`data\processed\modeling_panel.parquet`
+
+and remains ignored by Git because it contains licensed row-level WRDS-derived data.
+
+Aggregate validation outputs are written to:
+
+`results\data_validation\production\`.
+
+## Earlier preliminary empirical runs
+
+The earlier two-predictor single-stock validation remains reproducible with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_single_stock.py --ticker AAPL --quick
 ```
 
-Its outputs are written to `results\preliminary\`.
-
-## Current cross-sectional empirical run
-
-The current empirical stage is the fixed-universe cross-sectional portfolio evaluation:
+The earlier two-predictor cross-sectional portfolio evaluation remains reproducible with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\make_portfolios.py --quick
 ```
 
-The quick empirical configuration uses CRSP CIZ monthly common stocks from 2012 through 2025; a fixed top-300 eligible common-stock universe formed on 2012-01-31; a $5 feature-month price screen; size and momentum 12-2 predictors; next-calendar-month returns; expanding-median VIX regimes; historical forward-chaining model selection; and model refits every three OOS months.
+Those empirical outputs use size and momentum only. They predate the completed Compustat/CCM book-to-market construction and must remain labeled as preliminary historical results.
 
-The cross-sectional run persists the complete OOS prediction panel, applies explicit training-feature and realized-target timing checks, validates prediction dispersion before portfolio sorting, constructs D1-D10 equal- and lagged-market-equity value-weighted portfolios, computes D10-minus-D1 returns overall and by VIX regime, and reports monthly Spearman rank diagnostics.
+## Current research stage
 
-Outputs are written to `results\preliminary_cross_section\`. Generated stock-level prediction and assignment files are intentionally ignored by Git and should not be committed to a public repository.
+The complete production data panel now contains size, book-to-market, and momentum 12–2 with explicit leakage-safe accounting timing.
 
-## Current research limitation
-
-The current stage remains preliminary and uses size and momentum only. The production design still requires Compustat fundamentals, CCM linking, properly timed book equity/book-to-market, the production sample specification, formal HAC/Newey-West inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis.
+The next stage is full baseline Elastic Net and XGBoost estimation on the validated three-predictor panel under the frozen time-respecting OOS design. Formal HAC/Newey-West inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis remain subsequent tasks.

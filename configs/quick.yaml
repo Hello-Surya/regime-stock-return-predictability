@@ -41,3 +41,11 @@ run:
         learning_rate: [0.03, 0.08]
         subsample: [0.8]
         colsample_bytree: [0.8]
+  data_construction:
+    crsp_history_years: 2
+    accounting_history_years: 3
+    accounting_assignment_month: 6
+    ccm_link_types: ["LC", "LU"]
+    ccm_link_primary: ["P", "C"]
+    book_equity_version: "ff_style_v1"
+    book_to_market_denominator: "prior_december_firm_market_equity"

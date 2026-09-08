@@ -2,33 +2,47 @@
 
 \subsection{Forecasting objective}
 
-For stock $i$ in month $t$, the forecasting problem is
+For stock $i$ in formation month $t$, the forecasting problem is
 \[
 \widehat{r}_{i,t+1} = f\left(X_{i,t}\right),
 \]
-where $X_{i,t}$ contains characteristics observable at the prediction date and $r_{i,t+1}$ is the realized next-calendar-month return. The preliminary information set contains log market equity and momentum 12--2. The baseline models do not use future regime information in training or prediction. Volatility regimes are used initially to evaluate whether out-of-sample performance differs across market states.
+where $X_{i,t}$ contains characteristics observable at the prediction date and $r_{i,t+1}$ is the realized next-calendar-month return.
+
+The frozen baseline information set contains three predictors: log market equity, book-to-market, and momentum 12--2. The completed data-construction pipeline attaches these predictors to formation month $t$ using only information allowed by the CRSP market-data timing and the conservative annual accounting convention described in the Data section.
+
+The earlier preliminary empirical results in the repository use only log market equity and momentum 12--2. The completed three-predictor panel is the input to the next full baseline estimation stage; the earlier numerical findings are not retroactively relabeled.
+
+\subsection{Accounting-information safeguards}
+
+Annual book-to-market is assigned with an explicit characteristic-year key rather than unrestricted forward filling. A fiscal-year-end observation from calendar year $y-1$ first becomes eligible in June $y$ and remains active through May $y+1$. The market-equity denominator is prior-December firm market equity, converted to the same units as Compustat book equity.
+
+CCM mappings must be effective on the accounting observation's fiscal-year-end date. Duplicate and competing mappings are resolved deterministically before monthly assignment. A hard validation rule rejects any accounting observation that would enter a monthly row before its permitted June availability date.
 
 \subsection{Elastic Net}
 
-Elastic Net provides the regularized linear benchmark. Predictor scaling is performed inside the model pipeline and is fit on the historical training observations only. Hyperparameters governing the overall regularization strength and the mixture of $L_1$ and $L_2$ penalties are selected using forward-chaining validation contained entirely within the historical training sample.
+Elastic Net provides the regularized linear benchmark. Predictor scaling is performed inside the model pipeline and is fit on historical training observations only. Hyperparameters governing the overall regularization strength and the mixture of $L_1$ and $L_2$ penalties are selected using forward-chaining validation contained entirely within the historical training sample.
 
 \subsection{XGBoost}
 
-XGBoost provides the nonlinear forecasting model. The estimator uses a squared-error regression objective and a fixed random seed for reproducibility. In the preliminary quick-run configuration, a deliberately restricted hyperparameter set is selected using the same time-respecting historical validation principle as the Elastic Net model. The resulting parameters are frozen before the out-of-sample evaluation period.
+XGBoost provides the nonlinear forecasting model. The estimator uses a squared-error regression objective and a fixed random seed for reproducibility. Hyperparameter selection follows the same time-respecting historical validation principle as the Elastic Net model.
 
 \subsection{Time-respecting out-of-sample design}
 
-The empirical implementation uses an expanding historical training window. For every prediction month, training observations must have feature dates strictly earlier than the test month, and the corresponding training outcomes must already be observable. No random train/test split is used. The quick-run configuration refits the models every three months rather than monthly to reduce computation while preserving the chronological information set. Production runs will use the full configured retraining schedule.
+The empirical implementation uses an expanding historical training window. For every prediction month, training feature dates must be strictly earlier than the test month, and the corresponding training outcomes must already be observable. No random train/test split is used.
 
-The preprocessing, model fitting, and hyperparameter-selection steps are separated so that no transformation is estimated using future test observations. Automated tests verify next-month return alignment, momentum timing, calendar-gap handling, expanding-median regime construction, and the ordering of training and test dates.
+Preprocessing, model fitting, and hyperparameter selection are separated so that transformations are not estimated using future test observations. Automated tests verify next-month return alignment, momentum timing, calendar-gap handling, expanding-median regime construction, book-equity fallbacks, CCM effective dates, June accounting assignment, prior-December market-equity alignment, unit normalization, and the exclusion of future accounting information.
 
 \subsection{Forecast evaluation}
 
-For the displayed stock, forecast accuracy is summarized with mean squared error (MSE), root mean squared error (RMSE), mean absolute error (MAE), conventional $R^2$, prediction-realization correlation, and out-of-sample $R^2$. The principal out-of-sample benchmark is a stock-specific expanding historical-mean forecast calculated using information available before each prediction month. The statistic is
+Forecast accuracy is summarized with mean squared error, root mean squared error, mean absolute error, conventional $R^2$, prediction--realization correlation, and out-of-sample $R^2$.
+
+The principal out-of-sample benchmark is a stock-specific expanding historical-mean forecast calculated using information available before each prediction month:
 \[
-R^2_{OOS} = 1 - \frac{\sum_t (r_{t+1}-\widehat{r}_{t+1})^2}
+R^2_{OOS} =
+1 -
+\frac{\sum_t (r_{t+1}-\widehat{r}_{t+1})^2}
 {\sum_t (r_{t+1}-\bar{r}_{t}^{\,hist})^2},
 \]
-where $\bar{r}_{t}^{\,hist}$ is the historical mean return available before the prediction at $t$. Positive values indicate that the model improves on the expanding historical-mean benchmark, while negative values indicate that the benchmark has lower squared forecast error. For diagnostic purposes, the pipeline also reports an OOS $R^2$ relative to a zero-return forecast.
+where $\bar{r}_{t}^{\,hist}$ is the historical mean return available before the prediction at $t$.
 
-All metrics are reported for the full AAPL out-of-sample period and separately for HIGH- and LOW-VIX months. Formal statistical inference is not attached to these preliminary single-stock comparisons.
+Volatility regimes are used to evaluate whether predictive performance differs across HIGH- and LOW-VIX states. Formal portfolio inference, turnover, and transaction-cost adjustments are not introduced by the completed data-construction stage and remain separate subsequent analyses.
