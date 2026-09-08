@@ -15,9 +15,9 @@ Before model selection or estimation, `scripts/run_baseline_models.py --producti
 - 1,340,823 observations in the final screened predictor/target/regime sample; and
 - zero duplicate `permno`/`date` rows.
 
-A material mismatch stops estimation rather than silently using a different sample.
+The final production OOS prediction panel contains 893,486 stock-month observations from January 2000 through November 2025.
 
-The final baseline estimation sample is complete-case for all three predictors, the next-month target, and the VIX regime. Both models therefore receive the same effective information set. The model pipelines retain their historical preprocessing components, but the production complete-case screen means no predictor imputation is used to expand one model's sample relative to the other.
+The baseline estimation sample is complete-case for all three predictors, the next-month target, and the VIX regime. Both models therefore receive the same effective information set.
 
 ## Information timing
 
@@ -26,19 +26,22 @@ Formation is at month-end `t`. The saved target must be realized in the next act
 For an OOS formation month `t`:
 
 - every training feature date is strictly earlier than `t`;
-- every training target realization date is on or before `t` under the repository's established month-end information convention;
+- every training target realization date is on or before `t`;
 - preprocessing is fitted on the historical training sample only; and
 - the VIX regime attached to `t` is the regime used to evaluate the return realized at `t+1`.
 
-When the completed panel exposes `vix_expanding_median`, the production loader audits the saved label against the frozen rule: HIGH when `VIX_t` is above the expanding median using VIX observations through `t`, otherwise LOW. The estimator never reclassifies regimes after seeing returns.
+When the completed panel exposes `vix_expanding_median`, the production loader audits the saved label against the frozen rule: HIGH when `VIX_t` is above the expanding median using VIX observations through `t`, otherwise LOW.
 
 ## Hyperparameter selection
 
-Hyperparameters are selected once using only the pre-OOS history and are then frozen for the production OOS run. Validation is forward-chaining by calendar month; random or shuffled K-fold validation is not used.
+Hyperparameters are selected once using only the 1990–1999 pre-OOS history and are then frozen for the production OOS run. Validation is forward-chaining by calendar month; random or shuffled K-fold validation is not used.
 
-The configured grids remain the baseline grids in `configs/production.yaml`. To make historical selection feasible on a laptop, parameter selection uses a deterministic cross-sectional cap of 500 observations per historical month. This sampling is confined to hyperparameter selection. Every production model refit uses the full eligible expanding historical sample.
+Parameter selection uses a deterministic cross-sectional cap of 500 observations per historical month. This sampling is confined to hyperparameter selection. Every production model refit uses the full eligible expanding historical sample.
 
-Elastic Net standardization is learned inside its historical training pipeline. XGBoost uses `reg:squarederror`, a fixed seed, histogram tree construction, and the configured four-thread production limit.
+The selected production specifications are:
+
+- Elastic Net: `alpha = 0.01`, `l1_ratio = 0.1`, `max_iter = 20000`;
+- XGBoost: `n_estimators = 200`, `max_depth = 2`, `learning_rate = 0.01`, `subsample = 1.0`, `colsample_bytree = 0.7`, `tree_method = hist`, and `n_jobs = 4`.
 
 ## Model refitting and OOS predictions
 
@@ -48,46 +51,91 @@ The primary row-level artifact is:
 
 `results/baseline_models/baseline_oos_predictions.parquet`
 
-It contains identifiers, formation and realization timing, the three predictors, actual next-month return, VIX/regime fields, the benchmark prediction, both model predictions, and training-end audit dates.
+The production run generated 893,486 OOS stock-month predictions across 311 formation months: 138 HIGH-VIX and 173 LOW-VIX months.
 
-The output directory is ignored by Git except for `.gitkeep`; licensed or row-level WRDS-derived artifacts must remain local.
+The output directory is ignored by Git except for `.gitkeep`; licensed or row-level WRDS-derived artifacts remain local.
 
 ## Headline OOS R-squared benchmark
 
-The full-panel headline OOS R-squared uses the **pooled expanding historical mean**. At formation month `t`, every stock receives the pooled mean of all next-month stock returns whose target realization dates are observable on or before `t`.
+The production headline OOS R-squared uses the **pooled expanding historical mean**. At formation month `t`, every stock receives the pooled mean of all next-month stock returns whose target realization dates are observable on or before `t`.
 
-Formally, if the historical information set at `t` is `H_t`, the benchmark is
-
-`mean(y_j,s+1 for observations in H_t)`.
-
-The headline statistic is
+The statistic is:
 
 `1 - SSE_model / SSE_benchmark`.
 
-This pooled benchmark is the canonical full cross-sectional baseline. It is distinct from the stock-specific historical-mean benchmark used in the earlier single-stock AAPL validation. The change is documented because the production estimand is a pooled cross-sectional forecasting problem rather than a single-stock forecasting exercise. The benchmark is fixed ex ante and is never selected based on final model performance.
+This pooled benchmark is distinct from the stock-specific historical-mean benchmark used in the earlier AAPL validation and is fixed ex ante.
 
-## Predictive diagnostics
+## Production predictive results
 
-The production run writes:
+Overall return-level OOS R-squared is close to zero:
 
-- `baseline_model_metrics.csv`: N, MSE, RMSE, MAE, OOS R-squared, correlation, realized-return volatility, normalized RMSE, and benchmark RMSE for OVERALL, HIGH, and LOW states;
-- `baseline_model_comparison.csv`: concise paper-oriented model comparison;
-- `baseline_rank_metrics.csv`: summary of monthly cross-sectional Spearman rank IC, including mean, median, standard deviation, positive-month fraction, and number of months;
-- `monthly_rank_ic.csv`: month-level Spearman and Pearson IC diagnostics;
-- `prediction_diagnostics.csv`: prediction distribution, coverage, extremes, and realized-return distribution diagnostics;
-- `model_selection.csv`: historical CV grid results, selected parameters, and tuning interval; and
-- `run_metadata.json`: sample, provenance, configuration, benchmark, selected parameters, refit schedule, seed, and configuration fingerprint.
+| Model | OVERALL | HIGH | LOW |
+| --- | ---: | ---: | ---: |
+| Elastic Net | -0.000265 | -0.000680 | 0.000383 |
+| XGBoost | -0.000231 | -0.001058 | 0.001063 |
 
-Interpretability outputs are descriptive only. Elastic Net standardized coefficients are stored by refit date. Basic XGBoost feature importance is stored by refit date; it is not treated as structural importance or formal economic inference.
+Monthly cross-sectional rank IC provides a clearer regime pattern. XGBoost LOW-VIX mean Spearman IC is 0.018672 with HAC `t = 2.479` and `p = 0.0132`. XGBoost HIGH-VIX mean IC is -0.001778 with `p = 0.8866`. The direct XGBoost LOW-minus-HIGH IC difference is 0.020450 with `p = 0.1046`, so the regime contrast is suggestive but not conventionally significant.
+
+Elastic Net rank IC is not statistically significant overall or within either regime.
+
+## Economic-value stage
+
+`scripts/run_economic_value.py` reuses the saved production predictions and constructs tie-safe monthly D10-minus-D1 portfolios.
+
+The baseline portfolio design uses:
+
+- equal weighting and lagged-market-equity value weighting;
+- D10 long and D1 short;
+- return-drifted pre-rebalance weights for turnover;
+- 50 basis points one way per dollar of turnover; and
+- Newey–West/HAC inference with six monthly lags.
+
+The strongest baseline result is XGBoost in LOW-VIX equal-weighted portfolios:
+
+- gross monthly D10-minus-D1 mean: 0.009690;
+- gross HAC `t = 3.605`;
+- net monthly mean after 50 bps turnover costs: 0.007482;
+- annualized arithmetic net mean: 0.089781;
+- net Sharpe ratio: 0.796;
+- net HAC `t = 2.815`, `p = 0.00487`.
+
+The corresponding value-weighted LOW-VIX XGBoost portfolio is negative after costs. The signal is therefore concentrated away from the largest stocks.
+
+The direct LOW-minus-HIGH XGBoost equal-weighted net-return difference is 0.008458 per month with HAC `t = 1.521` and `p = 0.1282`. The paper therefore does not claim a conventionally significant direct regime difference.
+
+## Generated research artifacts
+
+Baseline estimation writes:
+
+- `baseline_oos_predictions.parquet`;
+- `baseline_model_metrics.csv`;
+- `baseline_model_comparison.csv`;
+- `baseline_rank_metrics.csv`;
+- `monthly_rank_ic.csv`;
+- `prediction_diagnostics.csv`;
+- `model_selection.csv`;
+- `run_metadata.json`;
+- `elastic_net_coefficients.csv`; and
+- `xgboost_feature_importance.csv`.
+
+Economic-value inference writes:
+
+- `portfolio_monthly_returns.csv`;
+- `portfolio_performance.csv`;
+- `portfolio_regime_tests.csv`;
+- `rank_ic_inference.csv`; and
+- `rank_ic_regime_tests.csv`.
+
+Interpretability outputs are descriptive only. Elastic Net standardized coefficients and XGBoost feature importance are not treated as structural causal quantities.
 
 ## Figures
 
-The run produces:
+The production run produces:
 
-- `baseline_oos_performance.png`: 12-month rolling cross-sectional forecast RMSE;
-- `regime_model_performance.png`: HIGH/LOW normalized forecast error;
-- `monthly_rank_ic.png`: monthly Spearman rank IC; and
-- `prediction_distribution.png`: prediction distributions with display-only 0.1% tail clipping clearly labeled on the axis.
+- `baseline_oos_performance.png`;
+- `regime_model_performance.png`;
+- `monthly_rank_ic.png`; and
+- `prediction_distribution.png`.
 
 Metric calculations always use the unmodified predictions.
 
@@ -109,4 +157,10 @@ Full production estimation:
 .\.venv\Scripts\python.exe scripts\run_baseline_models.py --production
 ```
 
-`--validate` uses synthetic data and is not an empirical result. The manuscript and headline README empirical findings should be updated only after the full production run has completed and its outputs have been inspected.
+Economic value and HAC inference:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_economic_value.py
+```
+
+`--validate` uses synthetic data and is not an empirical result.

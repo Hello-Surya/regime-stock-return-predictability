@@ -28,16 +28,6 @@ Using `.venv\Scripts\python.exe` directly avoids PowerShell activation-policy is
 
 Unit and synthetic tests do not require WRDS credentials.
 
-## Synthetic software validation
-
-Synthetic data are used only for software validation and are not empirical research results:
-
-```powershell
-.\.venv\Scripts\python.exe scripts\run_single_stock.py --synthetic --ticker STK001
-```
-
-Outputs are written to `results\synthetic_validation\`.
-
 ## WRDS source validation
 
 General CRSP/VIX validation:
@@ -86,7 +76,7 @@ Aggregate validation outputs are written to:
 
 The baseline estimator reuses the completed production panel. It does not rebuild CRSP, Compustat, CCM, book-to-market, or VIX data.
 
-Run computational/software validation first if desired:
+Software validation only:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_baseline_models.py --validate
@@ -94,13 +84,13 @@ Run computational/software validation first if desired:
 
 This mode uses synthetic data only and must not be interpreted as empirical evidence.
 
-Run the full production OOS estimation with:
+Production OOS estimation:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_baseline_models.py --production
 ```
 
-The production runner validates the frozen completed-data counts before tuning or fitting. It uses exactly `log_me`, `book_to_market`, and `mom_12_2`; selects hyperparameters once using historical forward-chaining validation; freezes those parameters; and refits Elastic Net and XGBoost on the expanding historical sample according to `configs\production.yaml`.
+The production runner validates the frozen completed-data counts before tuning or fitting. It uses exactly `log_me`, `book_to_market`, and `mom_12_2`; selects hyperparameters once using pre-OOS historical forward-chaining validation; freezes those parameters; and refits Elastic Net and XGBoost monthly on the expanding historical sample.
 
 Generated row-level predictions, checkpoints, tables, figures, and metadata are written locally under:
 
@@ -108,26 +98,46 @@ Generated row-level predictions, checkpoints, tables, figures, and metadata are 
 
 The generated directory is ignored by Git except for `.gitkeep`. Use `--refresh` only when intentionally clearing and recomputing model-selection and prediction checkpoints.
 
-See `docs\baseline_model_estimation.md` for benchmark, timing, tuning, checkpointing, diagnostics, and output definitions.
+## Economic-value and regime inference
+
+After production predictions exist, run:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_economic_value.py
+```
+
+The default specification applies a 50-basis-point one-way transaction cost per dollar of turnover and six monthly HAC lags. Both can be changed explicitly with command-line arguments, but the default values are the frozen baseline robustness specification.
+
+This stage reuses `baseline_oos_predictions.parquet`; it does not retrain Elastic Net or XGBoost.
+
+It writes:
+
+- `portfolio_monthly_returns.csv`;
+- `portfolio_performance.csv`;
+- `portfolio_regime_tests.csv`;
+- `rank_ic_inference.csv`; and
+- `rank_ic_regime_tests.csv`.
+
+The portfolio stage uses tie-safe monthly prediction ranks, equal-weighted and lagged-market-equity value-weighted D10-minus-D1 portfolios, return-drifted turnover, and Newey–West/HAC inference.
 
 ## Earlier preliminary empirical runs
 
-The earlier two-predictor single-stock validation remains reproducible with:
+The earlier two-predictor single-stock and reduced-cross-section runs remain reproducible for historical comparison:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_single_stock.py --ticker AAPL --quick
 ```
 
-The earlier two-predictor cross-sectional portfolio evaluation remains reproducible with:
-
 ```powershell
 .\.venv\Scripts\python.exe scripts\make_portfolios.py --quick
 ```
 
-Those empirical outputs use size and momentum only. They predate the completed Compustat/CCM book-to-market construction and must remain labeled as preliminary historical results.
+Those outputs use size and momentum only and are superseded by the three-predictor production baseline for headline empirical conclusions.
 
 ## Current research stage
 
-The complete production data panel contains size, book-to-market, and momentum 12–2 with explicit leakage-safe accounting timing. The production baseline estimation software is executable from the saved panel; empirical README/manuscript findings are updated only after the real production run completes and its outputs are inspected.
+The production three-predictor baseline and economic-value evaluation are complete. The OOS sample contains 893,486 stock-month predictions across 311 formation months from January 2000 through November 2025.
 
-Formal HAC/Newey-West portfolio inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis remain subsequent research tasks.
+The headline production evidence is concentrated in LOW-VIX months: XGBoost LOW-VIX mean Spearman IC is 0.01867 (`p = 0.013`), and the equal-weighted XGBoost LOW-VIX D10-minus-D1 portfolio earns 0.748% per month net of the frozen 50-basis-point turnover cost specification (`p = 0.0049`). The direct LOW-minus-HIGH rank and portfolio differences are positive but not conventionally significant.
+
+See `docs\baseline_model_estimation.md` and the paper sections for the exact methodology and interpretation.

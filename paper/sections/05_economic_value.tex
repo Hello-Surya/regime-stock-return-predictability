@@ -1,43 +1,73 @@
 \section{Economic Value}
 
-The preliminary economic-value analysis sorts stocks on out-of-sample predicted next-month returns within each formation month and model. D1 contains the lowest predicted returns and D10 the highest, and the long--short portfolio is $D10-D1$. Results are computed separately using equal weights and lagged-market-equity value weights. The current specification uses only size and momentum predictors; book-to-market remains deferred until the Compustat/CCM stage.
+The production economic-value analysis sorts stocks on out-of-sample predicted next-month returns within each formation month and model. D1 contains the lowest predictions and D10 the highest, and the long--short portfolio is $D10-D1$. Deciles use tie-preserving percentile ranks. Results are computed using equal weights and lagged-market-equity value weights.
 
-\subsection{Cross-sectional sort validity}
+The transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Turnover is measured relative to prior portfolio weights after they are drifted through realized returns.
 
-A model-month is eligible for portfolio formation only when the prediction cross-section contains sufficient forecast dispersion to support ten portfolios. This restriction is economically important in the current sample. The tuned Elastic Net produces one identical forecast for every eligible stock in every one of the 83 OOS months. All 83 Elastic Net month-model groups are therefore excluded from decile formation, and no Elastic Net portfolio-return result is reported. Deterministic security-identifier tie-breaking is not used to manufacture deciles from an intercept-only forecast.
+\subsection{Gross and net long--short performance}
 
-XGBoost produces non-degenerate prediction cross-sections in all 83 OOS months. Monthly eligible-stock counts range from 225 to 251, and every accepted month contains complete D1 through D10 portfolios. There are 42 HIGH-VIX formation months and 41 LOW-VIX formation months.
-
-\subsection{XGBoost portfolio returns}
-
-Table~\ref{tab:xgb-portfolios} reports descriptive XGBoost long--short results. The annualized arithmetic mean equals 12 times the monthly mean. Annualized volatility equals $\sqrt{12}$ times the monthly sample standard deviation. The reported Sharpe ratio is descriptive and uses a zero risk-free rate.
+Table~\ref{tab:portfolio-performance} reports the principal production portfolio results. Net returns subtract the 50-basis-point turnover cost.
 
 \begin{table}[htbp]
 \centering
-\caption{Preliminary XGBoost cross-sectional $D10-D1$ portfolio results}
-\label{tab:xgb-portfolios}
-\begin{tabular}{llrrrrr}
+\caption{Production $D10-D1$ portfolio performance}
+\label{tab:portfolio-performance}
+\begin{tabular}{lllrrrrr}
 \hline
-Regime & Weighting & $N$ & Mean monthly & Ann. mean & Ann. vol. & Desc. Sharpe \\
+Model & Weight & Regime & Gross mean & Gross $t$ & Net mean & Net Sharpe & Net $t$ \\
 \hline
-Overall & EW & 83 & -0.00017 & -0.00209 & 0.15804 & -0.013 \\
-HIGH    & EW & 42 & -0.00151 & -0.01808 & 0.18514 & -0.098 \\
-LOW     & EW & 41 &  0.00119 &  0.01429 & 0.12659 &  0.113 \\
-Overall & VW & 83 &  0.00708 &  0.08491 & 0.20338 &  0.417 \\
-HIGH    & VW & 42 &  0.00001 &  0.00010 & 0.23967 &  0.000 \\
-LOW     & VW & 41 &  0.01432 &  0.17178 & 0.15698 &  1.094 \\
+Elastic Net & EW & Overall & 0.00342 & 1.084 &  0.00214 &  0.153 &  0.671 \\
+Elastic Net & EW & HIGH    & 0.00096 & 0.169 & -0.00058 & -0.032 & -0.100 \\
+Elastic Net & EW & LOW     & 0.00538 & 1.798 &  0.00430 &  0.441 &  1.451 \\
+Elastic Net & VW & Overall & -0.00076 & -0.241 & -0.00198 & -0.122 & -0.623 \\
+Elastic Net & VW & HIGH    & -0.00191 & -0.341 & -0.00358 & -0.170 & -0.630 \\
+Elastic Net & VW & LOW     & 0.00016 & 0.049 & -0.00071 & -0.064 & -0.221 \\
+XGBoost     & EW & Overall & 0.00617 & 1.920 &  0.00373 &  0.267 &  1.157 \\
+XGBoost     & EW & HIGH    & 0.00176 & 0.304 & -0.00098 & -0.054 & -0.168 \\
+XGBoost     & EW & LOW     & 0.00969 & 3.605 &  0.00748 &  0.796 &  2.815 \\
+XGBoost     & VW & Overall & 0.00037 & 0.097 & -0.00248 & -0.144 & -0.639 \\
+XGBoost     & VW & HIGH    & -0.00004 & -0.007 & -0.00311 & -0.145 & -0.454 \\
+XGBoost     & VW & LOW     & 0.00071 & 0.219 & -0.00197 & -0.153 & -0.610 \\
 \hline
 \end{tabular}
 \end{table}
 
-The equal-weighted XGBoost spread is economically close to zero overall: the mean monthly $D10-D1$ return is approximately -0.017\%. The HIGH-VIX equal-weighted spread is -0.151\% per month and the LOW-VIX spread is 0.119\% per month. These magnitudes provide little evidence of a robust equal-weighted return spread in the current preliminary specification.
+The strongest economic-value result is the XGBoost equal-weighted LOW-VIX portfolio. Its gross mean return is 0.969\% per month with HAC $t=3.61$. After the frozen transaction-cost adjustment, the mean remains 0.748\% per month, corresponding to an annualized arithmetic mean of approximately 8.98\%, a net Sharpe ratio of 0.80, HAC $t=2.82$, and $p=0.0049$.
 
-The value-weighted results differ substantially. The overall value-weighted $D10-D1$ spread averages 0.708\% per month, corresponding to an annualized arithmetic mean of approximately 8.49\% and a descriptive Sharpe ratio of 0.42. This result is concentrated in LOW-VIX months: the LOW-VIX value-weighted spread averages 1.432\% per month, while the HIGH-VIX value-weighted spread is essentially zero. The LOW-VIX descriptive annualized arithmetic mean is approximately 17.18\%, with a descriptive Sharpe ratio of 1.09.
+The corresponding HIGH-VIX equal-weighted XGBoost portfolio has a net mean of approximately -0.098\% per month and no evidence of statistical significance. Elastic Net's LOW-VIX equal-weighted spread is positive but weaker: 0.430\% per month net, with HAC $t=1.45$ and $p=0.147$.
 
-\subsection{Interpretation}
+\subsection{Value weighting}
 
-The value-weighted LOW-VIX spread is economically notable, but it should not be interpreted as broad cross-sectional ranking success. XGBoost's average monthly Spearman rank correlation between predicted and realized returns is slightly negative overall (-0.0101) and remains slightly negative in both regimes. Consequently, the positive LOW-VIX value-weighted spread appears to be concentrated in economically large stocks or in the tails of the predicted-return distribution rather than reflecting a uniformly monotonic ranking relation across the full cross-section.
+The XGBoost signal does not survive value weighting. In LOW-VIX months the gross value-weighted spread is only 0.071\% per month, and the net spread after turnover costs is -0.197\% per month. Elastic Net value-weighted portfolios are similarly weak.
 
-The preliminary regime pattern also does not support a simple claim that predictability is stronger during HIGH-VIX periods. Under value weighting, the observed long--short spread is concentrated in LOW-VIX months; under equal weighting, both regime-specific spreads are small. This contrast is itself informative for the research question and motivates further analysis with the complete predictor set, formal inference, and additional portfolio diagnostics.
+The contrast between equal- and value-weighted results indicates that the production economic signal is concentrated away from the largest stocks. This is an economically important qualification because smaller-stock strategies can face higher implementation frictions than the baseline transaction-cost assumption captures.
 
-These results remain descriptive. No Newey--West/HAC significance tests, turnover adjustment, or transaction costs are incorporated in this table. The frozen transaction-cost robustness specification of 0 and 50 basis points one way, together with the full Compustat/CCM predictor panel and formal statistical inference, is reserved for subsequent stages.
+\subsection{Direct regime tests}
+
+Table~\ref{tab:portfolio-regime-tests} reports LOW-minus-HIGH HAC tests.
+
+\begin{table}[htbp]
+\centering
+\caption{LOW-minus-HIGH long--short portfolio differences}
+\label{tab:portfolio-regime-tests}
+\begin{tabular}{lllrrr}
+\hline
+Model & Weight & Return & LOW--HIGH & HAC $t$ & $p$-value \\
+\hline
+Elastic Net & EW & Gross & 0.00443 & 0.807 & 0.4196 \\
+Elastic Net & EW & Net   & 0.00488 & 0.874 & 0.3819 \\
+Elastic Net & VW & Gross & 0.00206 & 0.335 & 0.7377 \\
+Elastic Net & VW & Net   & 0.00287 & 0.460 & 0.6456 \\
+XGBoost     & EW & Gross & 0.00793 & 1.432 & 0.1521 \\
+XGBoost     & EW & Net   & 0.00846 & 1.521 & 0.1282 \\
+XGBoost     & VW & Gross & 0.00075 & 0.110 & 0.9121 \\
+XGBoost     & VW & Net   & 0.00115 & 0.168 & 0.8669 \\
+\hline
+\end{tabular}
+\end{table}
+
+Although the XGBoost equal-weighted LOW-VIX strategy is statistically positive within LOW months, the direct LOW-minus-HIGH portfolio difference is not conventionally significant. The correct interpretation is therefore that economic predictability is concentrated in LOW-VIX states in this baseline specification, not that the LOW regime is formally proven to outperform the HIGH regime.
+
+\subsection{Economic interpretation}
+
+The portfolio results reinforce the rank-IC evidence while adding an important weighting dimension. The nonlinear model extracts economically meaningful ordering information during LOW-VIX months, but this information is not uniformly distributed across market capitalization. The disappearance under value weighting and the imprecision of the direct regime test motivate further robustness analysis using alternative regime definitions, subsamples, and richer implementation-cost assumptions.

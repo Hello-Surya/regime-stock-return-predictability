@@ -6,43 +6,56 @@ For stock $i$ in formation month $t$, the forecasting problem is
 \[
 \widehat{r}_{i,t+1} = f\left(X_{i,t}\right),
 \]
-where $X_{i,t}$ contains characteristics observable at the prediction date and $r_{i,t+1}$ is the realized next-calendar-month return.
+where $X_{i,t}$ contains characteristics observable at the formation date and $r_{i,t+1}$ is the realized next-calendar-month return.
 
-The frozen baseline information set contains three predictors: log market equity, book-to-market, and momentum 12--2. The completed data-construction pipeline attaches these predictors to formation month $t$ using only information allowed by the CRSP market-data timing and the conservative annual accounting convention described in the Data section.
-
-The earlier preliminary empirical results in the repository use only log market equity and momentum 12--2. The completed three-predictor panel is the input to the next full baseline estimation stage; the earlier numerical findings are not retroactively relabeled.
+The frozen baseline information set contains three predictors: log market equity, book-to-market, and momentum 12--2. The completed data-construction pipeline attaches these predictors to formation month $t$ using only information allowed by the CRSP market-data timing and the annual accounting convention described in the Data section.
 
 \subsection{Accounting-information safeguards}
 
 Annual book-to-market is assigned with an explicit characteristic-year key rather than unrestricted forward filling. A fiscal-year-end observation from calendar year $y-1$ first becomes eligible in June $y$ and remains active through May $y+1$. The market-equity denominator is prior-December firm market equity, converted to the same units as Compustat book equity.
 
-CCM mappings must be effective on the accounting observation's fiscal-year-end date. Duplicate and competing mappings are resolved deterministically before monthly assignment. A hard validation rule rejects any accounting observation that would enter a monthly row before its permitted June availability date.
+CCM mappings must be effective on the accounting observation's fiscal-year-end date. Duplicate and competing mappings are resolved deterministically before monthly assignment. Validation rules reject accounting observations that would enter before their permitted availability date.
+
+\subsection{Volatility regimes}
+
+The market regime at formation month $t$ is defined using VIX information available through $t$. Let $\widetilde{VIX}_t$ denote the expanding historical median of VIX through month $t$. The regime is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise. The regime observed at $t$ is used to classify the prediction for the return realized at $t+1$.
 
 \subsection{Elastic Net}
 
-Elastic Net provides the regularized linear benchmark. Predictor scaling is performed inside the model pipeline and is fit on historical training observations only. Hyperparameters governing the overall regularization strength and the mixture of $L_1$ and $L_2$ penalties are selected using forward-chaining validation contained entirely within the historical training sample.
+Elastic Net provides the regularized linear benchmark. Predictor scaling is performed inside the model pipeline and is fit on historical training observations only. The selected production hyperparameters are $\alpha=0.01$ and $l_1$ ratio $=0.1$, with a maximum of 20,000 optimization iterations.
 
 \subsection{XGBoost}
 
-XGBoost provides the nonlinear forecasting model. The estimator uses a squared-error regression objective and a fixed random seed for reproducibility. Hyperparameter selection follows the same time-respecting historical validation principle as the Elastic Net model.
+XGBoost provides the nonlinear forecasting model with squared-error loss and a fixed random seed. The selected production specification uses 200 trees, maximum depth 2, learning rate 0.01, column subsampling 0.7, row subsampling 1.0, histogram tree construction, and four fitting threads.
+
+\subsection{Historical model selection}
+
+Hyperparameters are selected once using only the 1990--1999 pre-OOS sample and five forward-chaining validation folds. To make the historical grid search computationally feasible while preserving calendar structure, tuning uses a deterministic cap of 500 observations per historical month. This sampling is confined to model selection; production OOS refits use the full eligible expanding historical sample. Selected hyperparameters are frozen before the January 2000 OOS period begins.
 
 \subsection{Time-respecting out-of-sample design}
 
-The empirical implementation uses an expanding historical training window. For every prediction month, training feature dates must be strictly earlier than the test month, and the corresponding training outcomes must already be observable. No random train/test split is used.
+The empirical implementation uses an expanding historical training window and monthly refitting. For every prediction month, training feature dates are strictly earlier than the test month, and training outcomes must already be observable by the formation date. No random train/test split is used.
 
-Preprocessing, model fitting, and hyperparameter selection are separated so that transformations are not estimated using future test observations. Automated tests verify next-month return alignment, momentum timing, calendar-gap handling, expanding-median regime construction, book-equity fallbacks, CCM effective dates, June accounting assignment, prior-December market-equity alignment, unit normalization, and the exclusion of future accounting information.
+The final production OOS panel contains 893,486 stock-month predictions across 311 formation months from January 2000 through November 2025. There are 138 HIGH-VIX and 173 LOW-VIX formation months.
 
 \subsection{Forecast evaluation}
 
-Forecast accuracy is summarized with mean squared error, root mean squared error, mean absolute error, conventional $R^2$, prediction--realization correlation, and out-of-sample $R^2$.
+Forecast accuracy is summarized with mean squared error, root mean squared error, mean absolute error, prediction--realization correlation, and out-of-sample $R^2$.
 
-The principal out-of-sample benchmark is a stock-specific expanding historical-mean forecast calculated using information available before each prediction month:
+The production OOS benchmark is the pooled expanding historical mean. At formation month $t$, every stock receives the mean of all historical next-month returns whose realization dates are observable on or before $t$:
 \[
-R^2_{OOS} =
-1 -
-\frac{\sum_t (r_{t+1}-\widehat{r}_{t+1})^2}
-{\sum_t (r_{t+1}-\bar{r}_{t}^{\,hist})^2},
+R^2_{OOS}
+=
+1-
+\frac{\sum_{i,t}(r_{i,t+1}-\widehat r_{i,t+1})^2}
+{\sum_{i,t}(r_{i,t+1}-\bar r^{\,hist}_{t})^2}.
 \]
-where $\bar{r}_{t}^{\,hist}$ is the historical mean return available before the prediction at $t$.
+This benchmark is fixed ex ante and differs from the stock-specific historical mean used in an earlier single-stock validation.
 
-Volatility regimes are used to evaluate whether predictive performance differs across HIGH- and LOW-VIX states. Formal portfolio inference, turnover, and transaction-cost adjustments are not introduced by the completed data-construction stage and remain separate subsequent analyses.
+Cross-sectional ranking is evaluated each month using Spearman and Pearson correlations between predicted and realized returns. Mean monthly Spearman information coefficients are tested using Newey--West/HAC standard errors with six monthly lags. Direct LOW-minus-HIGH differences are estimated with a regression of monthly IC on an indicator for the LOW-VIX regime using the same HAC lag length.
+
+\subsection{Economic-value evaluation}
+
+Stocks are sorted each month into ten prediction portfolios using tie-preserving percentile ranks. D1 contains the lowest predicted returns and D10 the highest, and the long--short portfolio is $D10-D1$. Results are calculated with equal weights and with value weights based on lagged market equity. The lagged market-equity date is required to be the previous month-end.
+
+Turnover is measured against the previous portfolio after drifting prior weights through realized returns. The frozen transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Gross and net monthly long--short returns are summarized overall and by VIX regime. Mean returns and LOW-minus-HIGH differences are evaluated using Newey--West/HAC inference with six monthly lags.
