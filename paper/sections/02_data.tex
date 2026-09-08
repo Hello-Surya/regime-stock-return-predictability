@@ -22,7 +22,7 @@ where $SHE$ is stockholders' equity, $DT$ is deferred taxes and investment tax c
 
 \subsection{CRSP/Compustat linkage}
 
-Compustat observations are linked to CRSP securities using the CRSP/Compustat Merged link-history table \texttt{crsp.ccmxpf\_lnkhist}. The baseline retains link types \texttt{LC} and \texttt{LU} and primary indicators \texttt{P} and \texttt{C}. A link must be effective on the Compustat fiscal-year-end date. Open-ended link dates are handled as open intervals on the missing side.
+Compustat observations are linked to CRSP securities through the CRSP/Compustat Merged database. The implementation uses the link-history table \texttt{crsp.ccmxpf\_lnkhist}. The baseline retains link types \texttt{LC} and \texttt{LU} and primary indicators \texttt{P} and \texttt{C}. A link must be effective on the Compustat fiscal-year-end date. Open-ended link dates are handled as open intervals on the missing side.
 
 Competing mappings are resolved deterministically before monthly assignment, prioritizing primary links and the accepted link types. The construction never merges Compustat to CRSP by ticker or company name.
 
