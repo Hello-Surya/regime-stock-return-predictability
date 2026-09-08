@@ -12,6 +12,8 @@ Table~\ref{tab:portfolio-performance} reports the principal production portfolio
 \centering
 \caption{Production $D10-D1$ portfolio performance}
 \label{tab:portfolio-performance}
+{\small
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{lllrrrrr}
 \hline
 Model & Weight & Regime & Gross mean & Gross $t$ & Net mean & Net Sharpe & Net $t$ \\
@@ -30,6 +32,7 @@ XGBoost     & VW & HIGH    & -0.00004 & -0.007 & -0.00311 & -0.145 & -0.454 \\
 XGBoost     & VW & LOW     & 0.00071 & 0.219 & -0.00197 & -0.153 & -0.610 \\
 \hline
 \end{tabular}
+}
 \end{table}
 
 The strongest economic-value result is the XGBoost equal-weighted LOW-VIX portfolio. Its gross mean return is 0.969\% per month with HAC $t=3.61$. After the frozen transaction-cost adjustment, the mean remains 0.748\% per month, corresponding to an annualized arithmetic mean of approximately 8.98\%, a net Sharpe ratio of 0.80, HAC $t=2.82$, and $p=0.0049$.
