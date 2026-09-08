@@ -32,12 +32,20 @@ In HIGH-VIX months, Elastic Net and XGBoost produce OOS $R^2$ values of -0.0132 
 
 This pattern is consistent with the research question but does not yet establish stronger return predictability in high-volatility regimes. All four regime-specific OOS $R^2$ values remain below zero.
 
+\subsection{Cross-sectional ranking diagnostics}
+
+The cross-sectional evaluation contains 83 OOS formation months from January 2019 through November 2025. Monthly eligible-stock counts range from 225 to 251, with a median of 240. The evaluation preserves the fixed top-300 research universe, applies the feature-month price screen, and uses only information observable by each formation date.
+
+The tuned Elastic Net specification does not generate usable cross-sectional rankings. In every one of the 83 OOS months, all eligible stocks receive the same Elastic Net forecast. The portfolio code therefore classifies all 83 Elastic Net month-model groups as non-sortable because they contain fewer than ten distinct predictions. No Elastic Net decile or long--short result is reported. This is interpreted as a substantive null result for the current two-predictor regularized linear specification, not as a software failure.
+
+XGBoost retains genuine forecast dispersion in all 83 OOS months and therefore supports cross-sectional ranking diagnostics. Its mean monthly Spearman correlation between predicted and realized next-month returns is -0.0101 overall, with a median of -0.0165 and a monthly standard deviation of 0.1049. Mean Spearman correlation is -0.0115 in HIGH-VIX months and -0.0086 in LOW-VIX months. The correlation is positive in 43.4\% of all OOS months. These diagnostics do not indicate broad monotonic ranking ability in the current preliminary specification.
+
 \subsection{Additional diagnostics}
 
-The prediction-realization correlations are weak or negative. Overall correlations are -0.2381 for Elastic Net and -0.1133 for XGBoost. However, the models are estimated as cross-sectional return-prediction models, so single-stock time-series correlation is not the only relevant criterion. The next stage tests whether the predictions rank stocks cross-sectionally in a way that produces subsequent return spreads.
+The AAPL prediction-realization correlations are weak or negative. Overall correlations are -0.2381 for Elastic Net and -0.1133 for XGBoost. Relative to a zero-return forecast, both models obtain positive diagnostic OOS $R^2$ values: approximately 0.0616 for Elastic Net and 0.0717 for XGBoost overall.
 
-Relative to a zero-return forecast, both models obtain positive diagnostic OOS $R^2$ values: approximately 0.0616 for Elastic Net and 0.0717 for XGBoost overall.
+The cross-sectional results clarify why single-stock forecast metrics and portfolio evidence must be interpreted separately. The tuned Elastic Net can produce time-varying forecasts for a selected stock while still collapsing to an intercept-only forecast within each monthly cross-section. XGBoost, in contrast, produces cross-sectional dispersion, but its average rank correlation remains slightly negative. The associated portfolio-return evidence is reported separately in the economic-value section.
 
 \subsection{Interpretation and current scope}
 
-The current empirical stage supports three limited conclusions. First, the complete WRDS-based forecasting pipeline is operational and generates genuine out-of-sample predictions under explicit timing restrictions. Second, XGBoost modestly outperforms Elastic Net on forecast-error measures in the current AAPL validation. Third, benchmark-relative performance is less negative in HIGH-VIX months than in LOW-VIX months for both models. None of these findings is treated as formal evidence of economically valuable predictability until the cross-sectional portfolio and full-data analyses are completed.
+The current empirical stage supports four limited conclusions. First, the WRDS-based forecasting pipeline generates genuine out-of-sample predictions under explicit timing restrictions. Second, XGBoost modestly outperforms Elastic Net on forecast-error measures in the preliminary AAPL validation. Third, the tuned Elastic Net has no usable cross-sectional ranking signal in the current size-and-momentum specification. Fourth, XGBoost produces valid cross-sectional forecast dispersion, but its average monthly Spearman rank correlation is slightly negative. Portfolio return spreads are therefore treated as descriptive economic-value evidence rather than as proof of broad ranking skill. Formal inference, transaction-cost robustness, and the full Compustat/CCM predictor set remain for later stages.

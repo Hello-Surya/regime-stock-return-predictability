@@ -26,7 +26,7 @@ Using `.venv\Scripts\python.exe` directly avoids PowerShell activation-policy is
 .\.venv\Scripts\python.exe -m pytest
 ```
 
-The current implementation contains **23 software tests**. Unit tests do not require WRDS credentials.
+The validated cross-sectional branch currently contains **38 software tests**. Unit tests do not require WRDS credentials.
 
 ## Synthetic software validation
 
@@ -48,18 +48,30 @@ The script securely authenticates through the normal WRDS Python workflow, resol
 
 Never place a WRDS password in Python source, YAML, Git, or chat.
 
-## Current empirical single-stock run
+## Preliminary single-stock validation
 
-For the current real empirical stage, run:
+The earlier real-data validation can still be reproduced with:
 
 ```powershell
 .\.venv\Scripts\python.exe scripts\run_single_stock.py --ticker AAPL --quick
 ```
 
-The quick empirical configuration uses CRSP CIZ monthly common stocks from 2012 through 2025; a fixed top-300 eligible common-stock universe formed on 2012-01-31 with AAPL retained explicitly; complete monthly histories; a $5 feature-month price screen; size and momentum 12-2 predictors; next-calendar-month returns; expanding-median VIX regimes; historical forward-chaining model selection; and model refits every three OOS months.
+Its outputs are written to `results\preliminary\`.
 
-Real outputs are written to `results\preliminary\`.
+## Current cross-sectional empirical run
+
+The current empirical stage is the fixed-universe cross-sectional portfolio evaluation:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\make_portfolios.py --quick
+```
+
+The quick empirical configuration uses CRSP CIZ monthly common stocks from 2012 through 2025; a fixed top-300 eligible common-stock universe formed on 2012-01-31; a $5 feature-month price screen; size and momentum 12-2 predictors; next-calendar-month returns; expanding-median VIX regimes; historical forward-chaining model selection; and model refits every three OOS months.
+
+The cross-sectional run persists the complete OOS prediction panel, applies explicit training-feature and realized-target timing checks, validates prediction dispersion before portfolio sorting, constructs D1-D10 equal- and lagged-market-equity value-weighted portfolios, computes D10-minus-D1 returns overall and by VIX regime, and reports monthly Spearman rank diagnostics.
+
+Outputs are written to `results\preliminary_cross_section\`. Generated stock-level prediction and assignment files are intentionally ignored by Git and should not be committed to a public repository.
 
 ## Current research limitation
 
-The current stage is deliberately a preliminary empirical validation with size and momentum only. The production design still requires Compustat fundamentals, CCM linking, properly timed book equity/book-to-market, the full CRSP universe, portfolio construction, transaction costs, and formal inference.
+The current stage remains preliminary and uses size and momentum only. The production design still requires Compustat fundamentals, CCM linking, properly timed book equity/book-to-market, the production sample specification, formal HAC/Newey-West inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis.

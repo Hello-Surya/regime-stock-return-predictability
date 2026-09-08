@@ -2,11 +2,28 @@
 from __future__ import annotations
 import pandas as pd
 
+
 def validate_oos_predictions(predictions: pd.DataFrame) -> None:
-    if predictions.empty: raise ValueError("No OOS predictions were produced.")
-    p = predictions.copy(); p["date"] = pd.to_datetime(p["date"]); p["train_end"] = pd.to_datetime(p["train_end"])
-    if not (p["train_end"] < p["date"]).all(): raise AssertionError("Leakage detected: at least one training end date is not before its test date.")
-    if p[["actual", "prediction"]].isna().any().any(): raise AssertionError("Predictions contain missing realized or predicted returns.")
+    if predictions.empty:
+        raise ValueError("No OOS predictions were produced.")
+    p = predictions.copy()
+    formation_col = "formation_date" if "formation_date" in p.columns else "date"
+    train_feature_col = "train_feature_end_date" if "train_feature_end_date" in p.columns else "train_end"
+    p[formation_col] = pd.to_datetime(p[formation_col])
+    p[train_feature_col] = pd.to_datetime(p[train_feature_col])
+    if not (p[train_feature_col] < p[formation_col]).all():
+        raise AssertionError("Leakage detected: at least one training feature date is not before formation.")
+    if "train_target_end_date" in p.columns:
+        p["train_target_end_date"] = pd.to_datetime(p["train_target_end_date"])
+        if not (p["train_target_end_date"] <= p[formation_col]).all():
+            raise AssertionError("Leakage detected: at least one training target was not observable by formation.")
+    if "realized_return_date" in p.columns:
+        p["realized_return_date"] = pd.to_datetime(p["realized_return_date"])
+        if not (p["realized_return_date"] > p[formation_col]).all():
+            raise AssertionError("Target timing error: realized return date must be after formation date.")
+    if p[["actual", "prediction"]].isna().any().any():
+        raise AssertionError("Predictions contain missing realized or predicted returns.")
+
 
 def data_validation_report(panel: pd.DataFrame, feature_cols: list[str]) -> pd.DataFrame:
     rows=[{"check":"sample_start","value":str(pd.to_datetime(panel["date"]).min().date())},{"check":"sample_end","value":str(pd.to_datetime(panel["date"]).max().date())},{"check":"n_rows","value":int(len(panel))},{"check":"n_stocks","value":int(panel["permno"].nunique())},{"check":"duplicate_permno_date","value":int(panel.duplicated(["permno","date"]).sum())},{"check":"target_missing_rate","value":float(panel["next_month_return"].isna().mean())}]
@@ -15,6 +32,7 @@ def data_validation_report(panel: pd.DataFrame, feature_cols: list[str]) -> pd.D
         rows += [{"check":f"missing_rate_{col}","value":float(panel[col].isna().mean())},{"check":f"p01_{col}","value":float(panel[col].quantile(0.01))},{"check":f"p50_{col}","value":float(panel[col].quantile(0.50))},{"check":f"p99_{col}","value":float(panel[col].quantile(0.99))}]
     for q in (0.01,0.50,0.99): rows.append({"check":f"return_q{int(q*100):02d}","value":float(panel["ret"].quantile(q))})
     return pd.DataFrame(rows)
+
 
 def crsp_monthly_validation_report(data: pd.DataFrame) -> pd.DataFrame:
     if data.empty: return pd.DataFrame([{"check":"n_rows","value":0}])

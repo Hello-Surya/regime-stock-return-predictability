@@ -17,12 +17,16 @@ def _calendar_safe_features(group: pd.DataFrame) -> pd.DataFrame:
     g = group.sort_values("date").copy()
     ret = _monthly_series(g, "ret")
     me = _monthly_series(g, "market_equity")
-    momentum = ret.shift(2).rolling(11, min_periods=11).apply(lambda x: np.prod(1.0 + x) - 1.0, raw=True)
+    momentum = ret.shift(2).rolling(11, min_periods=11).apply(
+        lambda x: np.prod(1.0 + x) - 1.0, raw=True
+    )
     next_return = ret.shift(-1)
     me_lag = me.shift(1)
     g["mom_12_2"] = g["date"].map(momentum)
     g["next_month_return"] = g["date"].map(next_return)
     g["me_lag"] = g["date"].map(me_lag)
+    g["realized_return_date"] = g["date"] + pd.offsets.MonthEnd(1)
+    g["me_lag_date"] = g["date"] - pd.offsets.MonthEnd(1)
     return g
 
 

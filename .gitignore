@@ -25,9 +25,11 @@ data/processed/*
 !data/processed/.gitkeep
 
 results/preliminary/*
+results/preliminary_cross_section/*
 results/production/*
 results/synthetic_validation/*
 !results/preliminary/.gitkeep
+!results/preliminary_cross_section/.gitkeep
 !results/production/.gitkeep
 !results/synthetic_validation/.gitkeep
 # LaTeX build artifacts
@@ -42,4 +44,3 @@ paper/*.synctex.gz
 paper/*.toc
 paper/*.pdf
 paper/build/
-
