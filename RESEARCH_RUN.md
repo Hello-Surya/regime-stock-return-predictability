@@ -82,6 +82,34 @@ Aggregate validation outputs are written to:
 
 `results\data_validation\production\`.
 
+## Full baseline model estimation
+
+The baseline estimator reuses the completed production panel. It does not rebuild CRSP, Compustat, CCM, book-to-market, or VIX data.
+
+Run computational/software validation first if desired:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_baseline_models.py --validate
+```
+
+This mode uses synthetic data only and must not be interpreted as empirical evidence.
+
+Run the full production OOS estimation with:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\run_baseline_models.py --production
+```
+
+The production runner validates the frozen completed-data counts before tuning or fitting. It uses exactly `log_me`, `book_to_market`, and `mom_12_2`; selects hyperparameters once using historical forward-chaining validation; freezes those parameters; and refits Elastic Net and XGBoost on the expanding historical sample according to `configs\production.yaml`.
+
+Generated row-level predictions, checkpoints, tables, figures, and metadata are written locally under:
+
+`results\baseline_models\`
+
+The generated directory is ignored by Git except for `.gitkeep`. Use `--refresh` only when intentionally clearing and recomputing model-selection and prediction checkpoints.
+
+See `docs\baseline_model_estimation.md` for benchmark, timing, tuning, checkpointing, diagnostics, and output definitions.
+
 ## Earlier preliminary empirical runs
 
 The earlier two-predictor single-stock validation remains reproducible with:
@@ -100,6 +128,6 @@ Those empirical outputs use size and momentum only. They predate the completed C
 
 ## Current research stage
 
-The complete production data panel now contains size, book-to-market, and momentum 12–2 with explicit leakage-safe accounting timing.
+The complete production data panel contains size, book-to-market, and momentum 12–2 with explicit leakage-safe accounting timing. The production baseline estimation software is executable from the saved panel; empirical README/manuscript findings are updated only after the real production run completes and its outputs are inspected.
 
-The next stage is full baseline Elastic Net and XGBoost estimation on the validated three-predictor panel under the frozen time-respecting OOS design. Formal HAC/Newey-West inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis remain subsequent tasks.
+Formal HAC/Newey-West portfolio inference, turnover measurement, and the frozen 0/50-basis-point one-way transaction-cost robustness analysis remain subsequent research tasks.

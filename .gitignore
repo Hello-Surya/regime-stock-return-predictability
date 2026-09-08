@@ -28,10 +28,12 @@ results/preliminary/*
 results/preliminary_cross_section/*
 results/production/*
 results/synthetic_validation/*
+results/baseline_models/*
 !results/preliminary/.gitkeep
 !results/preliminary_cross_section/.gitkeep
 !results/production/.gitkeep
 !results/synthetic_validation/.gitkeep
+!results/baseline_models/.gitkeep
 # LaTeX build artifacts
 paper/*.aux
 paper/*.bbl
@@ -44,3 +46,6 @@ paper/*.synctex.gz
 paper/*.toc
 paper/*.pdf
 paper/build/
+
+# Local repository snapshots
+*.zip

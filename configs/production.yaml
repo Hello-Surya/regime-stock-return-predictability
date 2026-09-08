@@ -10,12 +10,14 @@ run:
     universe_formation_date: null
     min_price: 5.0
     predictors: ["log_me", "book_to_market", "mom_12_2"]
+    benchmark: "pooled_expanding_historical_mean"
     min_train_months: 60
     retrain_every_months: 1
     xgboost_n_jobs: 4
     tuning:
       n_folds: 5
       min_train_months: 60
+      max_rows_per_month: 500
       elastic_net:
         alpha: [0.0001, 0.001, 0.01, 0.1]
         l1_ratio: [0.1, 0.5, 0.9]
