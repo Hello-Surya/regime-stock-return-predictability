@@ -34,7 +34,7 @@ Hyperparameters are selected once using only the 1990--1999 pre-OOS sample and f
 
 \subsection{Time-respecting out-of-sample design}
 
-The empirical implementation uses an expanding historical training window and monthly refitting. For every prediction month, training feature dates are strictly earlier than the test month, and training outcomes must already be observable by the formation date. No random train/test split is used.
+The empirical implementation uses an expanding historical training window and monthly refitting. For every prediction month, training feature dates are strictly earlier than the test month, and training outcomes must already be observable by the formation date. Concretely, a historical row formed at $s$ can enter the training sample at $t$ only when its recorded realized-return date satisfies $s+1\leq t$. No random train/test split is used.
 
 The final production OOS panel contains 893,486 stock-month predictions across 311 formation months from January 2000 through November 2025. There are 138 HIGH-VIX and 173 LOW-VIX formation months.
 

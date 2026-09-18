@@ -27,7 +27,9 @@ The frozen predictor set is:
 
 The VIX regime is observed at formation month-end `t` and is HIGH when VIX is above its expanding historical median using information through `t`; otherwise it is LOW. The target is the realized return in calendar month `t+1`.
 
-Hyperparameters are selected once using only 1990–1999 historical data with forward-chaining validation and are frozen for the OOS period. Both models are then refit monthly on the expanding historical sample. The production OOS R-squared benchmark is the pooled expanding historical mean of returns whose realizations are observable by the formation date.
+The authoritative downstream model input is the locally stored `data/processed/baseline_modeling_panel.parquet`. It carries explicit `formation_date` and `realized_return_date` fields, accounting lineage, the contemporaneous VIX regime, and an auditable `baseline_complete_case` flag. The row-level panel remains outside Git; aggregate sample-flow, missingness, distribution, coverage, correlation, and extreme-value diagnostics are generated under `results/data_validation/`.
+
+Hyperparameters are selected once using only 1990–1999 historical data with forward-chaining validation and are frozen for the OOS period. Both models are then refit monthly on the expanding historical sample. Historical rows can enter training only after their next-month return has become observable. The production OOS R-squared benchmark is the pooled expanding historical mean of returns whose realizations are observable by the formation date.
 
 ## Production Baseline Findings
 
@@ -64,7 +66,11 @@ These findings motivate the next research stages: temporal-stability analysis, a
 
 ## Reproducibility
 
-See `RESEARCH_RUN.md` for Windows/PowerShell commands.
+See `RESEARCH_RUN.md` for Windows/PowerShell commands. The model-ready panel can be revalidated without launching production estimation using:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_modeling_panel.py --production
+```
 
 Methodology is documented in:
 

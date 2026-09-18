@@ -1,0 +1,13 @@
+scope,method,feature_1,feature_2,correlation,months,observations
+pooled,pearson,log_me,book_to_market,-0.2564971915225868,,1798891.0
+pooled,pearson,log_me,mom_12_2,0.13429900706100664,,1798891.0
+pooled,pearson,book_to_market,mom_12_2,0.021957911539259498,,1798891.0
+pooled,spearman,log_me,book_to_market,-0.3037444957361438,,1798891.0
+pooled,spearman,log_me,mom_12_2,0.2664429543614007,,1798891.0
+pooled,spearman,book_to_market,mom_12_2,0.00793515999793142,,1798891.0
+average_monthly_cross_section,pearson,log_me,book_to_market,-0.2749884775899175,432.0,
+average_monthly_cross_section,pearson,log_me,mom_12_2,0.19083910682115357,432.0,
+average_monthly_cross_section,pearson,book_to_market,mom_12_2,-0.013445824527918804,432.0,
+average_monthly_cross_section,spearman,log_me,book_to_market,-0.30845504102134197,432.0,
+average_monthly_cross_section,spearman,log_me,mom_12_2,0.2936453551201357,432.0,
+average_monthly_cross_section,spearman,book_to_market,mom_12_2,-0.015242537313273755,432.0,

@@ -44,6 +44,8 @@ A valid book-to-market observation requires strictly positive book equity and st
 
 Momentum 12--2 compounds monthly stock returns from $t-12$ through $t-2$, excluding months $t$ and $t-1$. The target is the stock return in the next actual calendar month, $r_{i,t+1}$. Feature construction requires calendar adjacency; a gap in a security's history cannot cause a later observation to be treated as the next-month target or as part of a continuous momentum window.
 
+The canonical model-ready panel retains an explicit formation date $t$ and realized-return date $t+1$ for every security-month. It also retains the accounting datadate, June eligibility date, fiscal year, prior-December market equity, and the contemporaneous VIX state so that timing can be audited without reconstructing predictors downstream. Raw predictor values are stored without full-sample standardization or implicit winsorization.
+
 \subsection{VIX data and volatility regimes}
 
 Market volatility is measured using the Cboe VIX series resolved in the production build from \texttt{cboe\_all.cboe}. Daily observations are converted to monthly frequency using the final observed VIX close in each calendar month.

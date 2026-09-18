@@ -1,6 +1,11 @@
 run:
   mode: "quick"
   random_state: 42
+  baseline:
+    predictors: ["log_me", "book_to_market", "mom_12_2"]
+    target: "next_month_return"
+    formation_date: "formation_date"
+    realized_return_date: "realized_return_date"
   synthetic:
     n_stocks: 40
     n_months: 54

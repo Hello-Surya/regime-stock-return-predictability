@@ -13,8 +13,9 @@ from rdsrp.features.book_equity import (
     prepare_annual_accounting,
 )
 from rdsrp.features.build import build_features
+from rdsrp.model_spec import BASELINE_FEATURES
 
-PREDICTORS: tuple[str, ...] = ("log_me", "book_to_market", "mom_12_2")
+PREDICTORS: tuple[str, ...] = BASELINE_FEATURES
 PERCENTILES: tuple[float, ...] = (0.001, 0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99, 0.999)
 
 

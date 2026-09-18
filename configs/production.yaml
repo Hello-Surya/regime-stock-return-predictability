@@ -1,6 +1,11 @@
 run:
   mode: "production"
   random_state: 42
+  baseline:
+    predictors: ["log_me", "book_to_market", "mom_12_2"]
+    target: "next_month_return"
+    formation_date: "formation_date"
+    realized_return_date: "realized_return_date"
   real:
     crsp_start: "1990-01-01"
     crsp_end: "2025-12-31"

@@ -1,0 +1,11 @@
+Stage,Observations,Unique PERMNOs
+CRSP eligible universe,2140091,18898
+Valid next-month target,2119550,18827
+Price >= $5,1579850,16966
+Valid size,1579850,16966
+Valid momentum,1449200,15567
+Valid CCM match,1392321,14572
+Valid book equity,1341110,14231
+Valid book-to-market,1340823,14230
+Valid VIX regime,1340823,14230
+Complete baseline predictor set,1340823,14230

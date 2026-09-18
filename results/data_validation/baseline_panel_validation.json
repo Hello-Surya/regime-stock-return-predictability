@@ -1,0 +1,50 @@
+{
+  "artifact_policy": {
+    "aggregate_validation_files": "safe for repository",
+    "canonical_panel": "local row-level WRDS-derived file; excluded from Git",
+    "extreme_observations_audit": "local row-level WRDS-derived file; excluded from Git"
+  },
+  "baseline_features": [
+    "log_me",
+    "book_to_market",
+    "mom_12_2"
+  ],
+  "book_to_market_median": 0.5580521349402687,
+  "book_to_market_valid": 1818006,
+  "complete_case_permnos": 14230,
+  "complete_case_rows": 1340823,
+  "duplicate_security_month_rows": 0,
+  "formation_end": "2025-12-31",
+  "formation_start": "1990-01-31",
+  "high_months": 193,
+  "high_observations": 1018496,
+  "low_months": 239,
+  "low_observations": 1121595,
+  "market_equity_nonpositive": 0,
+  "mode": "production",
+  "model_loader_smoke_test": {
+    "elastic_net": "pass",
+    "features": [
+      "log_me",
+      "book_to_market",
+      "mom_12_2"
+    ],
+    "rows_used": 500,
+    "target": "next_month_return",
+    "xgboost": "pass"
+  },
+  "monthly_complete_case": {
+    "maximum": 4915,
+    "median": 2737.0,
+    "minimum": 0
+  },
+  "realized_return_end": "2026-01-31",
+  "realized_return_start": "1990-02-28",
+  "regime_validation": "historical_reference_verified",
+  "rows": 2140091,
+  "size_missing": 832,
+  "size_valid": 2139259,
+  "target": "next_month_return",
+  "timestamp_utc": "2026-09-18T13:18:14.896442+00:00",
+  "unique_permnos": 18898
+}

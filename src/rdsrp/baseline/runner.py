@@ -121,10 +121,10 @@ def run_production_baseline(repo_root: Path, *, refresh: bool = False) -> dict[s
     if refresh:
         _clear_outputs(paths)
 
-    panel_path = repo_root / "data" / "processed" / "modeling_panel.parquet"
+    panel_path = repo_root / "data" / "processed" / "baseline_modeling_panel.parquet"
     if not panel_path.exists():
         raise FileNotFoundError(
-            f"Completed production panel not found at {panel_path}. Reuse the validated local artifact."
+            f"Validated canonical production panel not found at {panel_path}. Run scripts/validate_modeling_panel.py --production first."
         )
 
     print("[1/8] Loading and validating the completed production panel...")
@@ -227,7 +227,7 @@ def run_production_baseline(repo_root: Path, *, refresh: bool = False) -> dict[s
     metadata = {
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "production_panel_path": str(panel_path.relative_to(repo_root)),
-        "production_panel_version": "validated_1990_2025_complete_panel",
+        "production_panel_version": "validated_canonical_baseline_modeling_panel",
         "git_commit_at_run": _git_sha(repo_root),
         "models": ["Elastic Net", "XGBoost"],
         "predictors": list(BASELINE_PREDICTORS),

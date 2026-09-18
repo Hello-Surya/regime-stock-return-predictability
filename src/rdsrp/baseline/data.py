@@ -9,7 +9,9 @@ import numpy as np
 import pandas as pd
 import yaml
 
-BASELINE_PREDICTORS: tuple[str, ...] = ("log_me", "book_to_market", "mom_12_2")
+from rdsrp.model_spec import BASELINE_FEATURES
+
+BASELINE_PREDICTORS: tuple[str, ...] = BASELINE_FEATURES
 EXPECTED_PRODUCTION_COUNTS: dict[str, int] = {
     "total_stock_months": 2_140_091,
     "complete_predictor_rows": 1_798_891,

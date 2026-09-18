@@ -72,9 +72,25 @@ Aggregate validation outputs are written to:
 
 `results\data_validation\production\`.
 
+Before model estimation, finalize and independently validate the canonical model-ready panel:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_modeling_panel.py --quick
+```
+
+```powershell
+.\.venv\Scripts\python.exe scripts\validate_modeling_panel.py --production
+```
+
+The production validation command writes the authoritative local model input to:
+
+`data\processed\baseline_modeling_panel.parquet`
+
+and safe aggregate diagnostics to `results\data_validation\`. The row-level canonical panel and row-level extreme-observation audit remain excluded from Git.
+
 ## Full baseline model estimation
 
-The baseline estimator reuses the completed production panel. It does not rebuild CRSP, Compustat, CCM, book-to-market, or VIX data.
+The baseline estimator reuses the validated canonical production panel at `data\processed\baseline_modeling_panel.parquet`. It does not rebuild CRSP, Compustat, CCM, book-to-market, or VIX data.
 
 Software validation only:
 

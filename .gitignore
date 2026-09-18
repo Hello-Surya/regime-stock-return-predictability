@@ -34,6 +34,12 @@ results/baseline_models/*
 !results/production/.gitkeep
 !results/synthetic_validation/.gitkeep
 !results/baseline_models/.gitkeep
+# Row-level WRDS-derived validation audits remain local
+results/data_validation/extreme_observations_audit.csv
+results/data_validation/quick/quick_extreme_observations_audit.csv
+results/data_validation/quick/quick_baseline_*
+results/data_validation/quick/quick_monthly_predictor_coverage.csv
+
 # LaTeX build artifacts
 paper/*.aux
 paper/*.bbl
