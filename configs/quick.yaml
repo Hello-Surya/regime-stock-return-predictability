@@ -29,14 +29,17 @@ run:
     oos_start: "2019-01-31"
     top_n_by_market_cap: 300
     universe_formation_date: "2012-01-31"
+    quick_oos_months: 6
     min_price: 5.0
-    predictors: ["log_me", "mom_12_2"]
+    predictors: ["log_me", "book_to_market", "mom_12_2"]
+    benchmark: "pooled_expanding_historical_mean"
     min_train_months: 48
     retrain_every_months: 3
     xgboost_n_jobs: 4
     tuning:
       n_folds: 3
       min_train_months: 36
+      max_rows_per_month: 250
       elastic_net:
         alpha: [0.0001, 0.001, 0.01]
         l1_ratio: [0.1, 0.5, 0.9]
