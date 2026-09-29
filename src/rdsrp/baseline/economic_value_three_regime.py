@@ -209,14 +209,25 @@ def attach_volatility_regimes(
     if merged["regime_3state"].isna().any():
         missing_months = merged.loc[merged["regime_3state"].isna(), "formation_date"].drop_duplicates()
         raise RuntimeError(f"Missing three-state VIX classification for {len(missing_months)} OOS months.")
-    if not np.allclose(
-        pd.to_numeric(merged["vix"], errors="coerce"),
-        pd.to_numeric(merged["vix_history"], errors="coerce"),
-        rtol=0.0,
-        atol=1e-10,
+    prediction_vix = pd.to_numeric(merged["vix"], errors="coerce").to_numpy(float)
+    history_vix = pd.to_numeric(merged["vix_history"], errors="coerce").to_numpy(float)
+    vix_close = np.isclose(
+        prediction_vix,
+        history_vix,
+        rtol=1e-6,
+        atol=1e-6,
         equal_nan=False,
-    ):
-        raise AssertionError("Prediction VIX values disagree with the historical VIX series.")
+    )
+    if not vix_close.all():
+        first_bad = int(np.flatnonzero(~vix_close)[0])
+        bad_date = pd.Timestamp(merged.iloc[first_bad]["formation_date"]).date()
+        max_abs_diff = float(np.nanmax(np.abs(prediction_vix - history_vix)))
+        raise AssertionError(
+            "Prediction VIX values disagree with the historical VIX series beyond "
+            f"float-storage tolerance; first mismatch={bad_date}, "
+            f"prediction={prediction_vix[first_bad]:.10g}, "
+            f"history={history_vix[first_bad]:.10g}, max_abs_diff={max_abs_diff:.10g}."
+        )
     old_binary = merged["regime"].astype(str).str.upper()
     new_binary = merged["regime_binary"].astype(str).str.upper()
     if not old_binary.eq(new_binary).all():
