@@ -1,21 +1,19 @@
-from pathlib import Path
-
 import numpy as np
 import pandas as pd
 
+import rdsrp.baseline.economic_value_three_regime as extension
 from rdsrp.baseline.economic_value_three_regime import (
     assign_deterministic_deciles,
     attach_volatility_regimes,
     build_expanding_vix_regimes,
-    classify_three_state_vix,
     build_portfolio_assignments,
+    classify_three_state_vix,
+    decile_return_profiles,
     monthly_decile_returns,
     monotonicity_diagnostics,
-    decile_return_profiles,
     summarize_portfolios,
 )
 from rdsrp.regimes.vix_regime import label_vix_regime
-import rdsrp.baseline.economic_value_three_regime as extension
 
 
 def _history():

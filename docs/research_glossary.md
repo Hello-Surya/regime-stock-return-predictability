@@ -36,6 +36,7 @@ Implementation-specific statements are governed by current code and frozen confi
 | IC | Information Coefficient | Primarily monthly cross-sectional Spearman prediction/realization correlation. | Current evaluation |
 | ITCB | Investment Tax Credit -- Balance Sheet | Fallback deferred-tax/ITC component. | Current data construction |
 | LOW | Low-volatility regime | VIX_t less than or equal to expanding median through t. | Current baseline |
+| MIDDLE | Middle-volatility regime | In the three-state extension, VIX_t is above expanding q33 and at or below expanding q67. | Current extension |
 | LS | Long-Short | Long D10, short D1 portfolio position. | Current economic-value evaluation |
 | LT | Liabilities -- Total | Compustat fallback input with AT. | Current data construction |
 | MAE | Mean Absolute Error | Mean absolute forecast error. | Current evaluation |
