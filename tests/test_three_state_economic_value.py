@@ -97,6 +97,34 @@ def test_binary_regime_is_identical_to_existing_expanding_median_rule():
     assert np.allclose(old["vix_expanding_median"], new["vix_expanding_median"])
 
 
+def test_vix_audit_accepts_float32_storage_rounding_but_rejects_real_mismatch():
+    predictions, history = _predictions()
+    precise_history = history.copy()
+    precise_history["vix"] = precise_history["vix"].astype(float) + 1.234567e-7
+
+    rounded_predictions = predictions.copy()
+    history_by_date = precise_history.set_index("date")["vix"]
+    rounded_predictions["vix"] = (
+        rounded_predictions["formation_date"].map(history_by_date).astype("float32")
+    )
+    rounded_regimes = build_expanding_vix_regimes(precise_history)
+    binary_by_date = rounded_regimes.set_index("date")["regime_binary"]
+    rounded_predictions["regime"] = rounded_predictions["formation_date"].map(binary_by_date)
+
+    augmented, _ = attach_volatility_regimes(rounded_predictions, precise_history)
+    assert len(augmented) == len(rounded_predictions)
+
+    materially_wrong = rounded_predictions.copy()
+    materially_wrong.loc[0, "vix"] = float(materially_wrong.loc[0, "vix"]) + 0.01
+    try:
+        attach_volatility_regimes(materially_wrong, precise_history)
+    except AssertionError as exc:
+        assert "float-storage tolerance" in str(exc)
+        assert "max_abs_diff" in str(exc)
+    else:
+        raise AssertionError("Expected a material VIX mismatch to fail the audit.")
+
+
 def test_deterministic_tie_breaking_uses_permno_order():
     group = pd.DataFrame({"permno": list(range(20, 0, -1)), "prediction": [1.0] * 20})
     deciles = assign_deterministic_deciles(group, "prediction")
