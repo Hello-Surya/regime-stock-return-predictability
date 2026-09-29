@@ -1,0 +1,127 @@
+\section{Research Terminology and Methodology Reference}
+\label{app:terminology}
+
+This appendix records the principal terminology and conventions used in the production analysis. It is an academically focused subset of the repository's living technical reference, \texttt{docs/research\_glossary.md}. When an implementation detail is material to interpretation, the definitions below follow the validated production code and configuration rather than a generic textbook convention.
+
+\subsection{Data sources and identifiers}
+
+\begin{description}
+\item[WRDS.] Wharton Research Data Services, the access platform used for licensed CRSP, Compustat, CCM, and the preferred Cboe VIX source.
+\item[CRSP.] Center for Research in Security Prices. The production pipeline uses monthly U.S. security data from the current CIZ interface, with \texttt{crsp.msf\_v2} as the validated production source.
+\item[CIZ.] The current integrated CRSP stock-data format used by the production source resolver. The production CIZ path identifies eligible ordinary common equity through the available security classifications rather than relying on legacy share codes alone.
+\item[Compustat.] Source of annual firm accounting fundamentals; the validated production source is \texttt{comp.funda}.
+\item[CCM.] CRSP/Compustat Merged link history. The production implementation uses \texttt{crsp.ccmxpf\_lnkhist} to map Compustat firms to CRSP securities subject to effective link dates.
+\item[PERMNO.] CRSP permanent security identifier. It is the authoritative longitudinal security key in the monthly panel; ticker is retained for readability rather than used as the primary join key.
+\item[GVKEY.] Compustat firm identifier used for annual fundamentals and CCM linkage.
+\end{description}
+
+\subsection{Returns, formation, and information timing}
+
+Let $i$ index securities and let $t$ denote a month-end formation date. The forecasting target is the next actual calendar-month return $R_{i,t+1}$. The canonical panel stores the formation date and the realized-return date separately, and the latter must equal the next calendar month-end. A later available observation after a calendar gap is not substituted for $t+1$.
+
+A historical observation may enter a model fitted for formation month $t$ only when its feature date is strictly earlier than $t$ and its target has already become observable by $t$. Thus, if a historical row was formed at month $s$, the row is usable only when its recorded realized-return date is no later than the current prediction date. This is the central target-observability safeguard against look-ahead bias.
+
+\subsection{Stock characteristics}
+
+\paragraph{Market equity (ME).}
+For a CRSP security-month,
+\[
+ME_{i,t}=|P_{i,t}|\times SHROUT_{i,t}.
+\]
+Because CRSP shares outstanding are measured in thousands, the core monthly market-equity variable is measured in thousands of U.S. dollars. Log size is
+\[
+\texttt{log\_me}_{i,t}=\log(ME_{i,t}),
+\]
+and is defined only for strictly positive market equity.
+
+The variable \texttt{me\_lag} is the previous actual calendar month's market equity. It is constructed on a calendar-complete monthly series, so a missing calendar month produces a missing lag rather than converting the previous observed row into a false one-month lag. Value-weighted portfolios use positive finite \texttt{me\_lag} measured at $t-1$.
+
+\paragraph{Book equity (BE).}
+Stockholders' equity follows the hierarchy \texttt{SEQ}, then \texttt{CEQ + PSTK}, then \texttt{AT - LT}. Preferred stock uses \texttt{PSTKRV}, then \texttt{PSTKL}, then \texttt{PSTK}, with zero used only when all preferred-stock fields are missing. Deferred taxes and investment tax credit use \texttt{TXDITC}, then \texttt{TXDB + ITCB}, with zero when the component is otherwise unavailable. The baseline book-equity definition is
+\[
+BE = SHE + DT - PS,
+\]
+where $SHE$ is stockholders' equity, $DT$ is deferred taxes and investment tax credit, and $PS$ is preferred stock. Nonpositive BE does not generate a valid baseline book-to-market observation.
+
+\paragraph{Book-to-market (B/M).}
+For characteristic year $y$,
+\[
+BM_{i,y}=\frac{BE_{i,y-1}}{ME^{Dec}_{i,y-1}}.
+\]
+The denominator is complete prior-December firm market equity, converted from CRSP dollar-thousands to millions to match Compustat units. When a firm has multiple valid linked CRSP securities represented in the research universe, their required December market equity is summed at the firm level. If a required linked security lacks December ME, B/M is left missing rather than constructed from an incomplete denominator.
+
+The accounting characteristic associated with a fiscal-year end in calendar year $y-1$ first becomes eligible in June $y$ and remains assigned through May $y+1$. This conservative June convention is enforced explicitly rather than through unrestricted forward filling.
+
+\paragraph{Momentum 12--2.}
+The momentum characteristic compounds monthly returns from $t-12$ through $t-2$:
+\[
+MOM_{i,t}^{12-2}=\prod_{j=2}^{12}(1+R_{i,t-j})-1.
+\]
+Month $t-1$ and the formation month $t$ are excluded. Eleven calendar-contiguous historical return observations are required; missing calendar months break the window.
+
+\subsection{VIX volatility regime}
+
+Daily Cboe VIX observations are converted to monthly frequency using the final observed VIX close in each calendar month. Let $VIX_t$ be the formation-month value and let $\widetilde{VIX}_t$ be the expanding median computed using monthly observations through and including $t$. The production rule is HIGH when
+\[
+VIX_t > \widetilde{VIX}_t,
+\]
+and LOW when $VIX_t \leq \widetilde{VIX}_t$. The state observed at formation month $t$ classifies the prediction whose target is realized at $t+1$; future VIX observations do not enter the threshold.
+
+\subsection{Forecasting models and model selection}
+
+\paragraph{Elastic Net.}
+Elastic Net is the regularized linear benchmark combining $L_1$ and $L_2$ coefficient penalties. Its preprocessing pipeline contains \texttt{StandardScaler}, and the scaler is fitted on the historical training sample only. The selected production specification is $\alpha=0.01$, $l_1$ ratio $=0.1$, and a maximum of 20,000 optimization iterations. The model stage does not impute missing predictors; production estimation is complete-case for the three frozen predictors.
+
+\paragraph{XGBoost.}
+Extreme Gradient Boosting is the nonlinear boosted-tree model. The selected production specification uses 200 trees, maximum depth 2, learning rate 0.01, row subsampling 1.0, column subsampling 0.7, histogram tree construction, and four fitting threads, with squared-error loss and a fixed random seed.
+
+\paragraph{Hyperparameters and forward-chaining validation.}
+Model parameters are quantities estimated during fitting; hyperparameters control the fitting procedure or model architecture and are selected before the production OOS period. Production hyperparameters are selected once from the 1990--1999 pre-OOS history with five chronological forward-chaining folds. Validation training dates precede the validation month, and training targets must be observable by the corresponding validation date. A deterministic cap of 500 observations per historical month is used only for the grid search; full eligible historical samples are used for production refits. Selected hyperparameters are then frozen.
+
+\subsection{Out-of-sample evaluation}
+
+The production design uses an expanding historical training window and monthly refitting. For every OOS formation month, both models are estimated on all eligible historical observations permitted by the information-timing rules and then predict the current eligible cross-section.
+
+The headline benchmark is the pooled expanding historical mean. At formation month $t$, every stock receives the mean of all next-month returns whose realization dates are observable by $t$. The production OOS coefficient of determination is
+\[
+R^2_{OOS}
+=1-
+\frac{\sum_{i,t}(R_{i,t+1}-\widehat R_{i,t+1})^2}
+{\sum_{i,t}(R_{i,t+1}-\bar R^{\,hist}_{t})^2}.
+\]
+A negative $R^2_{OOS}$ means that the model has larger squared forecast error than this historical benchmark over the evaluated observations; it does not mean ``negative accuracy.'' Mean squared error (MSE), root mean squared error (RMSE), mean absolute error (MAE), and prediction--realization correlation are also reported.
+
+\subsection{Cross-sectional ranking and portfolios}
+
+The monthly rank information coefficient (IC) is the cross-sectional Spearman correlation between predicted next-month returns formed at $t$ and realized returns at $t+1$. It is computed within each formation month and then summarized through time. Pearson cross-sectional correlation is retained as an additional diagnostic.
+
+For economic-value evaluation, stocks are assigned to ten prediction portfolios within each month and model using tie-preserving percentile ranks. D1 contains the lowest predicted returns and D10 the highest. The long--short return is
+\[
+R^{LS}_{t+1}=R^{D10}_{t+1}-R^{D1}_{t+1}.
+\]
+Equal-weighted (EW) portfolios assign equal target weights within each leg. Value-weighted (VW) portfolios use positive finite previous-calendar-month market equity, \texttt{me\_lag}, as the weighting variable.
+
+Turnover is measured after drifting the prior month's portfolio weights through realized security returns. One-way turnover on a leg is one half of the $L_1$ distance between the new target weights and the return-drifted previous weights; a newly initiated leg has turnover one. Total long--short turnover is the sum across the long and short legs.
+
+The frozen transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Therefore,
+\[
+R^{net}_{t+1}=R^{gross}_{t+1}-0.005\times Turnover_{t}.
+\]
+
+\subsection{Performance and statistical inference}
+
+Mean monthly long--short returns are reported gross and net of the frozen transaction-cost specification. The arithmetic annualized mean is $12\bar R$, annualized volatility is $\sqrt{12}\,s_R$, and the reported descriptive annualized Sharpe ratio is $\sqrt{12}\,\bar R/s_R$ under the implementation's zero-risk-free-rate convention.
+
+Formal inference for monthly portfolio-return and rank-IC series uses heteroskedasticity- and autocorrelation-consistent (HAC) standard errors with Bartlett/Newey--West weights and six monthly lags in the frozen baseline. LOW-minus-HIGH differences are estimated directly rather than inferred by comparing two separately significant within-regime estimates.
+
+\subsection{Data quality and leakage safeguards}
+
+The canonical production panel has a unique security-month key defined by PERMNO and formation date. Complete-case eligibility requires the three baseline predictors, the next-month target, the VIX regime, and required timing fields after the feature-month price screen. The production pipeline does not apply baseline winsorization or full-sample predictor standardization. Elastic Net scaling is training-only; XGBoost uses the raw complete-case predictor values supplied to its estimator.
+
+The principal safeguards against future information are: calendar-safe $t/t+1$ target construction; conservative June accounting assignment; effective-dated CCM links; prior-December B/M market equity; an expanding VIX threshold using information only through formation; pre-OOS forward-chaining hyperparameter selection; training-only preprocessing; and explicit target-observability requirements in every model refit.
+
+\subsection{Historical and deferred terminology}
+
+The earlier preliminary specification used size and momentum only. Its single-stock and reduced-cross-section outputs remain historical validation artifacts and are not reinterpreted as estimates from the current three-predictor baseline. The current production baseline includes book-to-market and the completed economic-value stage, including turnover, the 50-basis-point transaction-cost robustness specification, and HAC inference.
+
+Fama--MacBeth regressions and SHAP explanations are not part of the current production baseline described in this manuscript appendix. If later research stages introduce them, their definitions and implementation status must be added to the living technical reference before that stage is considered complete.

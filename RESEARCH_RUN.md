@@ -28,6 +28,16 @@ Using `.venv\Scripts\python.exe` directly avoids PowerShell activation-policy is
 
 Unit and synthetic tests do not require WRDS credentials.
 
+## Research terminology audit
+
+Before a research stage is considered complete, run:
+
+~~~powershell
+.\.venv\Scripts\python.exe scripts\audit_terminology.py --strict
+~~~
+
+Review docs/research_glossary.md and the Terminology Appendix Review in docs/reproducibility.md whenever a stage adds or changes acronyms, variables, formulas, datasets, statistical methods, portfolio conventions, or implementation status.
+
 ## WRDS source validation
 
 General CRSP/VIX validation:

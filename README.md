@@ -64,6 +64,16 @@ The production baseline does not support a claim of strong unconditional next-mo
 
 These findings motivate the next research stages: temporal-stability analysis, alternative regime definitions, richer characteristic sets, and additional portfolio/transaction-cost robustness checks.
 
+## Research Terminology and Technical Reference
+
+A living [Research Terminology and Methodology Appendix](docs/research_glossary.md) defines the project's variables, acronyms, datasets, identifiers, model terminology, econometric concepts, portfolio conventions, timing rules, and research-integrity safeguards. The reference distinguishes general definitions from the exact implementation used in this repository and labels historical or deferred methodology explicitly.
+
+Before completing a future research stage, run the terminology audit and review any warnings:
+
+~~~powershell
+.\.venv\Scripts\python.exe scripts\audit_terminology.py --strict
+~~~
+
 ## Reproducibility
 
 See `RESEARCH_RUN.md` for Windows/PowerShell commands. The model-ready panel can be revalidated without launching production estimation using:
