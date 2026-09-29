@@ -146,6 +146,18 @@ It writes:
 
 The portfolio stage uses tie-safe monthly prediction ranks, equal-weighted and lagged-market-equity value-weighted D10-minus-D1 portfolios, return-drifted turnover, and Newey–West/HAC inference.
 
+## Three-state volatility economic-value extension
+
+After the validated production OOS prediction artifact and canonical modeling panel are present locally, run:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\make_portfolios.py --production
+```
+
+This command consumes the frozen Elastic Net and XGBoost predictions and does not retrain or retune either model. It preserves the original expanding-median LOW/HIGH regime and adds an expanding-tercile LOW/MIDDLE/HIGH specification using only formation-time VIX history. It writes gross EW/VW decile returns, D10-minus-D1 series, rank-IC summaries, regime diagnostics, decile-profile diagnostics, transition counts, figures, and a generated economic-value summary under `results\economic_value\`. The row-level `portfolio_assignments.csv` remains ignored by Git.
+
+Empirical LOW/MIDDLE/HIGH conclusions should be added to the README and manuscript results only after this production command and the complete test/terminology audits pass on the local licensed-data environment.
+
 ## Earlier preliminary empirical runs
 
 The earlier two-predictor single-stock and reduced-cross-section runs remain reproducible for historical comparison:

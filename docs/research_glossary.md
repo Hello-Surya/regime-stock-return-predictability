@@ -4,7 +4,7 @@
 
 This document is the canonical technical dictionary for the **Regime-Dependent Predictability of Stock Returns** repository. It defines terminology used in the code, configuration, validation outputs, figures, README, and manuscript, and records the project's exact interpretation of terms whose generic textbook meaning is not sufficiently precise.
 
-The reference is synchronized to the current production baseline: a monthly CRSP--Compustat--CCM panel; the frozen predictors log_me, book_to_market, and mom_12_2; VIX HIGH/LOW regimes; Elastic Net and XGBoost; strict expanding-window out-of-sample estimation; monthly rank diagnostics; and prediction-sorted economic-value analysis.
+The reference is synchronized to the current production baseline: a monthly CRSP--Compustat--CCM panel; the frozen predictors log_me, book_to_market, and mom_12_2; the baseline VIX HIGH/LOW regime plus the LOW/MIDDLE/HIGH three-state extension; Elastic Net and XGBoost; strict expanding-window out-of-sample estimation; monthly rank diagnostics; and prediction-sorted economic-value analysis.
 
 ## How to Read This Appendix
 
@@ -752,6 +752,24 @@ The manuscript is authoritative if later stages introduce formal new notation; t
 - eta and learning_rate are equivalent XGBoost names in repository configuration/model APIs; current production documentation uses learning_rate.
 - Newey--West and HAC refer to the current six-lag Bartlett-weight implementation unless a future method explicitly changes it.
 
+## Three-State Volatility Regime Extension
+
+### Binary Regime
+
+The binary regime is the original baseline volatility classification. At formation month t, `regime_binary` is LOW when VIX is less than or equal to the expanding historical VIX median through t and HIGH otherwise. The historical `regime` variable remains the backward-compatible binary label and must not be changed by the extension.
+
+### Three-State Volatility Regime
+
+A tercile divides an ordered distribution into three parts using two percentile thresholds. The extended `regime_3state` classification uses expanding historical VIX terciles computed only from information available through and including the formation month. The project uses NumPy's deterministic `quantile(..., method="linear")` convention and the same current-month-included information set as the existing expanding median.
+
+- `q33` / `vix_expanding_q33`: the 33.33rd-percentile expanding VIX threshold, $Q_{0.33,t}$.
+- `q67` / `vix_expanding_q67`: the 66.67th-percentile expanding VIX threshold, $Q_{0.67,t}$.
+- LOW: $VIX_t \leq Q_{0.33,t}$.
+- MIDDLE: $Q_{0.33,t} < VIX_t \leq Q_{0.67,t}$.
+- HIGH: $VIX_t > Q_{0.67,t}$.
+
+MIDDLE therefore means an intermediate formation-time VIX state by threshold definition; it does not imply that model or portfolio performance must be numerically intermediate. The three-state regime is used only to condition evaluation of the already-frozen OOS predictions. It is not a model predictor, is not optimized using portfolio outcomes, and does not create separately trained regime-specific models.
+
 ## Implementation Locations
 
 - CRSP/WRDS extraction: src/rdsrp/data/wrds.py
@@ -764,6 +782,7 @@ The manuscript is authoritative if later stages introduce formal new notation; t
 - tuning and expanding OOS estimation: src/rdsrp/baseline/estimation.py
 - predictive metrics/rank IC: src/rdsrp/baseline/reporting.py
 - portfolios/turnover/costs/HAC: src/rdsrp/baseline/economic_value.py
+- three-state regime/economic-value extension: src/rdsrp/baseline/economic_value_three_regime.py
 - production configuration: configs/production.yaml
 - quick configuration: configs/quick.yaml
 - manuscript methods: paper/sections/02_data.tex, 03_methods.tex, 05_economic_value.tex
@@ -777,6 +796,7 @@ The manuscript is authoritative if later stages introduce formal new notation; t
 | Baseline modeling-panel validation | formation/realized dates, complete case, lineage, leakage controls |
 | Full baseline estimation | Elastic Net, XGBoost, forward-chaining CV, expanding OOS, pooled benchmark, OOS R², Rank IC |
 | Production economic-value evaluation | D1/D10/D10-D1, EW/VW, me_lag, turnover, 50-bps costs, HAC/Newey--West, Sharpe |
+| Three-state volatility extension | expanding q33/q67, terciles, MIDDLE, regime_binary, regime_3state, deterministic prediction deciles |
 | Future robustness/extension work | Update when new regimes, predictors, inference, or interpretability methods are implemented |
 
 ## Terminology Maintenance Requirement

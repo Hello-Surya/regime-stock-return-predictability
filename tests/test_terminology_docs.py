@@ -27,6 +27,12 @@ def test_glossary_contains_required_current_baseline_terms() -> None:
         "OOS R²",
         "RMSE",
         "Rank IC",
+        "MIDDLE",
+        "q33",
+        "q67",
+        "tercile",
+        "regime_binary",
+        "regime_3state",
     ]
     missing = [term for term in required if term not in text]
     assert not missing, f"Glossary is missing required terms: {missing}"

@@ -18,7 +18,15 @@ CCM mappings must be effective on the accounting observation's fiscal-year-end d
 
 \subsection{Volatility regimes}
 
-The market regime at formation month $t$ is defined using VIX information available through $t$. Let $\widetilde{VIX}_t$ denote the expanding historical median of VIX through month $t$. The regime is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise. The regime observed at $t$ is used to classify the prediction for the return realized at $t+1$.
+The original baseline volatility specification remains a binary formation-time VIX regime. Let $\widetilde{VIX}_t$ denote the expanding historical median computed through and including formation month $t$. The baseline state is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise. The state at $t$ classifies the portfolio whose realized stock returns occur at $t+1$.
+
+As an additional conditional-evaluation specification, the analysis also constructs expanding historical VIX terciles using the same information-set convention. Let $Q_{0.33,t}$ and $Q_{0.67,t}$ denote the 33.33rd and 66.67th percentiles of VIX observations available through and including $t$. The implementation uses NumPy's deterministic linear quantile convention. The three states are
+\[
+\mathrm{LOW}_t:\;VIX_t\leq Q_{0.33,t},\qquad
+\mathrm{MIDDLE}_t:\;Q_{0.33,t}<VIX_t\leq Q_{0.67,t},\qquad
+\mathrm{HIGH}_t:\;VIX_t>Q_{0.67,t}.
+\]
+The thresholds evolve through time and never use VIX observations after the formation month. The three-state specification is an extension to, not a replacement for, the original expanding-median binary regime.
 
 \subsection{Elastic Net}
 
@@ -59,3 +67,6 @@ Cross-sectional ranking is evaluated each month using Spearman and Pearson corre
 Stocks are sorted each month into ten prediction portfolios using tie-preserving percentile ranks. D1 contains the lowest predicted returns and D10 the highest, and the long--short portfolio is $D10-D1$. Results are calculated with equal weights and with value weights based on lagged market equity. The lagged market-equity date is required to be the previous month-end.
 
 Turnover is measured against the previous portfolio after drifting prior weights through realized returns. The frozen transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Gross and net monthly long--short returns are summarized overall and by VIX regime. Mean returns and LOW-minus-HIGH differences are evaluated using Newey--West/HAC inference with six monthly lags.
+
+
+For the three-state volatility extension, stocks are ordered within each formation month and model by the frozen OOS forecast, with PERMNO used as a deterministic exact-tie breaker before forming ten approximately equal groups. The same cross-sectional sort is used in every volatility state; regimes classify monthly portfolio performance after sorting. This extension reports gross EW and lagged-ME VW results descriptively. Formal three-way HAC regime-difference tests and transaction-cost adjustments are reserved for later inference/robustness work rather than used to define or tune the three-state classification.

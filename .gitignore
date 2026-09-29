@@ -55,3 +55,6 @@ paper/build/
 
 # Local repository snapshots
 *.zip
+
+# Row-level three-state portfolio assignments remain local
+results/economic_value/portfolio_assignments.csv

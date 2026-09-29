@@ -59,13 +59,17 @@ MOM_{i,t}^{12-2}=\prod_{j=2}^{12}(1+R_{i,t-j})-1.
 \]
 Month $t-1$ and the formation month $t$ are excluded. Eleven calendar-contiguous historical return observations are required; missing calendar months break the window.
 
-\subsection{VIX volatility regime}
+\subsection{VIX volatility regimes}
 
-Daily Cboe VIX observations are converted to monthly frequency using the final observed VIX close in each calendar month. Let $VIX_t$ be the formation-month value and let $\widetilde{VIX}_t$ be the expanding median computed using monthly observations through and including $t$. The production rule is HIGH when
+Daily Cboe VIX observations are converted to monthly frequency using the final observed VIX close in each calendar month. The original binary baseline uses the expanding median through and including formation month $t$. It is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise; the historical \texttt{regime} label remains this baseline definition.
+
+The three-state extension adds expanding historical tercile thresholds without altering the binary labels. Let $Q_{0.33,t}$ and $Q_{0.67,t}$ denote the 33.33rd and 66.67th percentiles of VIX observations available through and including $t$, computed with the deterministic linear quantile convention. Then
 \[
-VIX_t > \widetilde{VIX}_t,
+\mathrm{LOW}_t: VIX_t\leq Q_{0.33,t},\qquad
+\mathrm{MIDDLE}_t: Q_{0.33,t}<VIX_t\leq Q_{0.67,t},\qquad
+\mathrm{HIGH}_t: VIX_t>Q_{0.67,t}.
 \]
-and LOW when $VIX_t \leq \widetilde{VIX}_t$. The state observed at formation month $t$ classifies the prediction whose target is realized at $t+1$; future VIX observations do not enter the threshold.
+These thresholds evolve through time; future VIX observations and portfolio outcomes never enter their construction. The state at formation month $t$ classifies performance realized at $t+1$. The variables \texttt{vix\_expanding\_q33}, \texttt{vix\_expanding\_q67}, \texttt{regime\_binary}, and \texttt{regime\_3state} make the two definitions explicit.
 
 \subsection{Forecasting models and model selection}
 

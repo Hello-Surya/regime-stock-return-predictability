@@ -1,4 +1,4 @@
-"""Run preliminary cross-sectional portfolio evaluation."""
+"""Run cross-sectional portfolio evaluation from validated research artifacts."""
 from __future__ import annotations
 
 import argparse
@@ -10,21 +10,30 @@ SRC = REPO_ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
+from rdsrp.baseline.economic_value_three_regime import (  # noqa: E402
+    run_three_regime_economic_value,
+)
 from rdsrp.logging_config import setup_logging  # noqa: E402
 from rdsrp.portfolios.strict_evaluation import run_strict_cross_sectional_evaluation  # noqa: E402
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument(
+        "--production",
+        action="store_true",
+        help="Evaluate frozen production OOS predictions across binary and three-state VIX regimes.",
+    )
+    mode.add_argument(
         "--quick",
         action="store_true",
-        help="Use the computationally reduced preliminary cross-sectional configuration.",
+        help="Run the historical reduced two-predictor cross-sectional validation path.",
     )
     parser.add_argument(
         "--refresh",
         action="store_true",
-        help="Intentionally refresh cached WRDS CRSP/VIX data before evaluation.",
+        help="Refresh cached WRDS data only for the historical --quick path.",
     )
     return parser.parse_args()
 
@@ -32,11 +41,17 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     setup_logging()
-    if not args.quick:
-        print("The current cross-sectional research stage is implemented for the quick-run configuration.")
-        print("Use --quick. The production run follows complete Compustat/CCM data construction.")
-        return 2
     try:
+        if args.production:
+            if args.refresh:
+                raise ValueError("--refresh is not used with --production; production reuses saved artifacts.")
+            artifacts = run_three_regime_economic_value(REPO_ROOT)
+            print()
+            print(f"Economic-value analysis complete: {artifacts['output_dir']}")
+            print(f"Three-regime summary: {artifacts['three_regime_summary']}")
+            print(f"Regime validation: {artifacts['regime_validation']}")
+            return 0
+
         artifacts = run_strict_cross_sectional_evaluation(
             REPO_ROOT, quick=True, refresh=args.refresh
         )
