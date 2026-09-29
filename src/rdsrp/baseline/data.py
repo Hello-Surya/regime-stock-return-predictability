@@ -131,7 +131,7 @@ def prepare_baseline_sample(panel: pd.DataFrame, *, min_price: float = 5.0) -> p
     sample[REALIZED_RETURN_DATE] = _month_end(sample[REALIZED_RETURN_DATE])
     expected_realized = sample[FORMATION_DATE] + pd.offsets.MonthEnd(1)
     if not sample[REALIZED_RETURN_DATE].eq(expected_realized).all():
-        raise AssertionError("next_month_return must be realized in calendar month t+1")
+        raise AssertionError("next_month_return must be calendar-adjacent and realized in calendar month t+1")
     if sample.duplicated(["permno", FORMATION_DATE]).any():
         raise AssertionError("Baseline sample contains duplicate permno/formation_date rows")
     regimes = set(sample["regime"].astype(str).str.upper().unique())
