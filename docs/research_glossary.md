@@ -65,8 +65,13 @@ Implementation-specific statements are governed by current code and frozen confi
 | VW | Value Weighted | Portfolio weights proportional to positive finite me_lag. | Current economic-value evaluation |
 | WRDS | Wharton Research Data Services | Access platform for licensed CRSP, Compustat, CCM, and preferred Cboe VIX data. | Current data construction |
 | XGB / XGBoost | Extreme Gradient Boosting | Nonlinear boosted-tree baseline model. | Current baseline |
+| BH | Benjamini--Hochberg | False-discovery-rate adjustment retained as a secondary multiple-testing diagnostic. | Current inference |
+| CI | Confidence Interval | Interval estimate around a parameter or mean using the current HAC covariance estimator. | Current inference |
+| FDR | False Discovery Rate | Expected proportion of false rejections among rejected hypotheses; controlled secondarily using Benjamini--Hochberg. | Current inference |
+| SE | Standard Error | Estimated sampling uncertainty; current time-series inference uses HAC standard errors. | Current inference |
 
 **Acronym collisions:** CV means cross-validation here, not coefficient of variation. IC means information coefficient in the rank-evaluation context. ME means market equity; BE means book equity.
+
 
 ## Core Research Concepts
 
@@ -347,11 +352,68 @@ A negative OOS R² does **not** mean negative accuracy. It means model squared f
 ### Correlation
 Linear prediction/realization correlation is retained as a diagnostic; cross-sectional ranking primarily uses monthly Spearman correlation.
 
-### Standard error
-Estimated sampling uncertainty of a statistic.
+### Standard error -- SE
+**General definition:** Estimated sampling uncertainty of a statistic.
+
+**Implementation in this research:** Monthly portfolio-return and rank-IC inference uses heteroskedasticity- and autocorrelation-consistent standard errors with the frozen six-month Newey--West lag.
+
+### Confidence interval -- CI
+**General definition:** Range of parameter values consistent with an estimate and its sampling uncertainty at a stated confidence level.
+
+**Implementation in this research:** Milestone 9 reports two-sided 95% confidence intervals using the same HAC covariance estimator as the corresponding t-statistic and p-value.
 
 ### t-statistic
-Estimate divided by its estimated standard error.
+**General definition:** Estimate divided by its estimated standard error.
+
+**Implementation in this research:** HAC t-statistics are reported for within-regime means and direct regime-difference contrasts.
+
+### p-value
+**General definition:** Probability, under the null model and the stated test procedure, of observing a test statistic at least as extreme as the realized statistic.
+
+**Implementation in this research:** Two-sided asymptotic p-values are reported for HAC mean tests and regime-difference tests. A p-value is not interpreted as the probability that the null hypothesis is true.
+
+### Statistical significance
+Assessment relative to a sampling distribution and a pre-specified significance threshold. Current manuscript language distinguishes within-regime evidence from direct regime-difference tests and does not infer a regime difference merely because one regime is statistically significant and another is not.
+
+Significance stars follow:
+- `***` for p < 0.01;
+- `**` for p < 0.05;
+- `*` for p < 0.10;
+- no star otherwise.
+
+### HAC / Newey--West
+**Status:** Implemented current economic-value/inference stage.
+
+Heteroskedasticity- and autocorrelation-consistent inference using Bartlett weights. The frozen production specification uses six monthly lags for portfolio-return and rank-IC time series and for regime-difference regressions.
+
+### Regime-difference regression
+**General definition:** Regression specification that estimates differences in conditional means across categorical states.
+
+**Implementation in this research:** Three-state inference uses LOW as the reference category:
+
+`y_t = alpha + beta_MIDDLE 1{MIDDLE_t} + beta_HIGH 1{HIGH_t} + epsilon_t`.
+
+Here, `alpha` is the LOW-regime mean, `beta_MIDDLE` estimates MIDDLE minus LOW, and `beta_HIGH` estimates HIGH minus LOW. The specification is estimated separately for each model and weighting family where applicable.
+
+### Linear contrast
+**General definition:** Linear combination of estimated regression coefficients used to test a parameter relationship not represented by one coefficient alone.
+
+**Implementation in this research:** HIGH minus MIDDLE is computed as `beta_HIGH - beta_MIDDLE` using the full HAC covariance matrix, so covariance between the two estimated coefficients is retained in the standard error.
+
+### Multiple testing
+**General definition:** Simultaneous evaluation of multiple hypotheses can increase the probability of false positive findings.
+
+**Implementation in this research:** Milestone 9 defines the hypothesis families before interpreting the results. For D10-D1 returns, each model-by-weighting family contains the three pairwise comparisons MIDDLE minus LOW, HIGH minus LOW, and HIGH minus MIDDLE. For Rank IC, each model family contains the same three comparisons.
+
+### Holm adjustment
+**General definition:** Step-down family-wise error-rate procedure that adjusts p-values for multiple hypothesis tests.
+
+**Implementation in this research:** Holm-adjusted p-values are the primary multiple-testing results for the pre-specified three-comparison regime-difference families.
+
+### BH / Benjamini--Hochberg FDR adjustment
+**General definition:** Multiple-testing procedure designed to control the false discovery rate rather than the family-wise error rate.
+
+**Implementation in this research:** Benjamini--Hochberg FDR-adjusted p-values are retained as a secondary diagnostic. Holm adjustment remains the primary inference reported in the manuscript.
 
 ### Statistical significance
 Assessment relative to a sampling distribution/p-value. Current manuscript language distinguishes within-regime evidence from direct LOW-minus-HIGH difference tests and does not infer a regime difference merely from significance in one regime.
@@ -799,6 +861,7 @@ MIDDLE therefore means an intermediate formation-time VIX state by threshold def
 | Production economic-value evaluation | D1/D10/D10-D1, EW/VW, me_lag, turnover, 50-bps costs, HAC/Newey--West, Sharpe |
 | Three-state volatility extension | expanding q33/q67, terciles, MIDDLE, regime_binary, regime_3state, deterministic prediction deciles |
 | Future robustness/extension work | Update when new regimes, predictors, inference, or interpretability methods are implemented |
+| Formal three-state statistical inference | HAC SEs, 95% CIs, t-statistics, p-values, LOW-reference regime-difference regressions, covariance-consistent linear contrasts, Holm family-wise adjustment, and Benjamini--Hochberg FDR diagnostics |
 
 ## Terminology Maintenance Requirement
 

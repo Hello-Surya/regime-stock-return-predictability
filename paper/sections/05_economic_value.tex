@@ -45,9 +45,9 @@ The XGBoost signal does not survive value weighting. In LOW-VIX months the gross
 
 The contrast between equal- and value-weighted results indicates that the production economic signal is concentrated away from the largest stocks. This is an economically important qualification because smaller-stock strategies can face higher implementation frictions than the baseline transaction-cost assumption captures.
 
-\subsection{Direct regime tests}
+\subsection{Direct binary regime tests}
 
-Table~\ref{tab:portfolio-regime-tests} reports LOW-minus-HIGH HAC tests.
+Table~\ref{tab:portfolio-regime-tests} reports LOW-minus-HIGH HAC tests for the original binary volatility specification.
 
 \begin{table}[htbp]
 \centering
@@ -71,6 +71,106 @@ XGBoost     & VW & Net   & 0.00115 & 0.168 & 0.8669 \\
 
 Although the XGBoost equal-weighted LOW-VIX strategy is statistically positive within LOW months, the direct LOW-minus-HIGH portfolio difference is not conventionally significant. The correct interpretation is therefore that economic predictability is concentrated in LOW-VIX states in this baseline specification, not that the LOW regime is formally proven to outperform the HIGH regime.
 
+\subsection{Three-state volatility-regime portfolio inference}
+
+The three-state extension separates formation months into LOW, MIDDLE, and HIGH volatility states using expanding historical VIX tercile thresholds. This extension evaluates the already-frozen out-of-sample predictions and does not retrain the models, change forecasts, modify portfolio assignments, alter portfolio weights, or redefine the original binary regime.
+
+Formal inference is conducted on the monthly gross $D10-D1$ return series. Newey--West/HAC covariance uses the same frozen six-month lag as the existing production inference.
+
+Table~\ref{tab:three-state-long-short-inference} reports within-regime results.
+
+\begin{table}[htbp]
+\centering
+\caption{HAC inference for monthly $D10-D1$ returns across three-state VIX regimes}
+\label{tab:three-state-long-short-inference}
+\small
+\begin{tabular}{lllrrrrrr}
+\hline
+Model & Weight & Regime & Mean & HAC SE & $t$ & $p$ & $N$ & Sig. \\
+\hline
+Elastic Net & EW & LOW    &  0.00486 & 0.00281 &  1.73 & 0.0836 & 104 & * \\
+Elastic Net & EW & MIDDLE &  0.00670 & 0.00545 &  1.23 & 0.2190 & 108 &  \\
+Elastic Net & EW & HIGH   & -0.00174 & 0.00664 & -0.26 & 0.7935 &  99 &  \\
+Elastic Net & VW & LOW    &  0.00344 & 0.00308 &  1.12 & 0.2637 & 104 &  \\
+Elastic Net & VW & MIDDLE & -0.00314 & 0.00466 & -0.67 & 0.5011 & 108 &  \\
+Elastic Net & VW & HIGH   & -0.00250 & 0.00719 & -0.35 & 0.7276 &  99 &  \\
+XGBoost     & EW & LOW    &  0.00813 & 0.00253 &  3.21 & 0.0013 & 104 & *** \\
+XGBoost     & EW & MIDDLE &  0.01201 & 0.00536 &  2.24 & 0.0249 & 108 & ** \\
+XGBoost     & EW & HIGH   & -0.00232 & 0.00661 & -0.35 & 0.7262 &  99 &  \\
+XGBoost     & VW & LOW    &  0.00171 & 0.00317 &  0.54 & 0.5899 & 104 &  \\
+XGBoost     & VW & MIDDLE &  0.00089 & 0.00604 &  0.15 & 0.8831 & 108 &  \\
+XGBoost     & VW & HIGH   & -0.00149 & 0.00840 & -0.18 & 0.8594 &  99 &  \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+Notes: Returns are decimal monthly returns. HAC inference uses Newey--West covariance with the repository's frozen six-month lag. Significance stars denote $^{***}p<0.01$, $^{**}p<0.05$, and $^{*}p<0.10$.
+\end{flushleft}
+\end{table}
+
+The clearest three-state result appears in the equal-weighted XGBoost portfolios. Mean monthly $D10-D1$ returns are 0.813\% in LOW-volatility months ($t=3.21$, $p=0.0013$), 1.201\% in MIDDLE-volatility months ($t=2.24$, $p=0.0249$), and -0.232\% in HIGH-volatility months ($t=-0.35$, $p=0.7262$). Thus, the spread is statistically positive within both LOW and MIDDLE volatility states but not within HIGH states.
+
+Elastic Net equal-weighted performance is weaker. Its LOW-regime mean is 0.486\% per month and is marginally significant at the 10\% level ($t=1.73$, $p=0.0836$), while MIDDLE and HIGH results are statistically insignificant. Neither model exhibits statistically significant three-state spreads under value weighting.
+
+Within-regime significance, however, does not establish that the mean spread differs statistically across volatility states. Direct regime differences are therefore estimated using a LOW-reference regression,
+
+\[
+R^{LS}_t
+=
+\alpha
++
+\beta_{\mathrm{MIDDLE}}
+\mathbf{1}\{\mathrm{MIDDLE}_t\}
++
+\beta_{\mathrm{HIGH}}
+\mathbf{1}\{\mathrm{HIGH}_t\}
++
+\varepsilon_t,
+\]
+
+where $\beta_{\mathrm{MIDDLE}}$ identifies MIDDLE minus LOW, $\beta_{\mathrm{HIGH}}$ identifies HIGH minus LOW, and HIGH minus MIDDLE is obtained using the full HAC covariance matrix. Holm adjustment is applied across the three pre-specified pairwise comparisons separately within each model-by-weighting family.
+
+\begin{table}[htbp]
+\centering
+\caption{Pairwise three-state volatility-regime differences in $D10-D1$ returns}
+\label{tab:three-state-long-short-differences}
+\small
+\begin{tabular}{lllrrrrr}
+\hline
+Model & Weight & Comparison & Difference & HAC SE & $t$ & Raw $p$ & Holm $p$ \\
+\hline
+Elastic Net & EW & MIDDLE - LOW  &  0.00184 & 0.00546 &  0.34 & 0.7364 & 0.7689 \\
+Elastic Net & EW & HIGH - LOW    & -0.00660 & 0.00685 & -0.96 & 0.3352 & 0.7689 \\
+Elastic Net & EW & HIGH - MIDDLE & -0.00844 & 0.00744 & -1.14 & 0.2563 & 0.7689 \\
+Elastic Net & VW & MIDDLE - LOW  & -0.00658 & 0.00525 & -1.25 & 0.2104 & 0.6311 \\
+Elastic Net & VW & HIGH - LOW    & -0.00595 & 0.00784 & -0.76 & 0.4480 & 0.8960 \\
+Elastic Net & VW & HIGH - MIDDLE &  0.00063 & 0.00875 &  0.07 & 0.9424 & 0.9424 \\
+XGBoost     & EW & MIDDLE - LOW  &  0.00388 & 0.00547 &  0.71 & 0.4789 & 0.4789 \\
+XGBoost     & EW & HIGH - LOW    & -0.01045 & 0.00689 & -1.52 & 0.1292 & 0.2584 \\
+XGBoost     & EW & HIGH - MIDDLE & -0.01432 & 0.00736 & -1.95 & 0.0516 & 0.1548 \\
+XGBoost     & VW & MIDDLE - LOW  & -0.00082 & 0.00660 & -0.12 & 0.9012 & 1.0000 \\
+XGBoost     & VW & HIGH - LOW    & -0.00320 & 0.00861 & -0.37 & 0.7107 & 1.0000 \\
+XGBoost     & VW & HIGH - MIDDLE & -0.00238 & 0.00962 & -0.25 & 0.8050 & 1.0000 \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+Notes: Differences are covariance-consistent linear contrasts from LOW-reference three-state regressions. Newey--West/HAC covariance uses six monthly lags. Holm adjustment is applied within each pre-specified three-comparison model-by-weighting family. Benjamini--Hochberg FDR-adjusted values are retained in the machine-readable research outputs.
+\end{flushleft}
+\end{table}
+
+For equal-weighted XGBoost, the estimated HIGH-minus-LOW difference is -1.045 percentage points per month ($t=-1.52$, raw $p=0.1292$). The largest contrast is HIGH minus MIDDLE at -1.432 percentage points per month, with $t=-1.95$ and raw $p=0.0516$. After Holm correction, however, the corresponding $p$-values are 0.2584 and 0.1548.
+
+Consequently, none of the three pairwise XGBoost equal-weighted regime contrasts is statistically significant at the 5\% family-wise level. No Elastic Net or value-weighted pairwise comparison survives the Holm adjustment either.
+
+The correct interpretation is therefore narrower than the raw within-regime estimates alone might suggest. XGBoost equal-weighted portfolios display economically large and statistically positive spreads in LOW and MIDDLE volatility states and weak performance in HIGH-volatility states, but the formal direct tests do not establish statistically distinct three-state regime effects after correction for multiple comparisons.
+
 \subsection{Economic interpretation}
 
-The portfolio results reinforce the rank-IC evidence while adding an important weighting dimension. The nonlinear model extracts economically meaningful ordering information during LOW-VIX months, but this information is not uniformly distributed across market capitalization. The disappearance under value weighting and the imprecision of the direct regime test motivate further robustness analysis using alternative regime definitions, subsamples, and richer implementation-cost assumptions.
+The portfolio results reinforce the cross-sectional ranking evidence while adding an important weighting dimension. In the original binary specification, the nonlinear model produces economically meaningful equal-weighted performance in LOW-VIX months, while the direct LOW-versus-HIGH contrast remains imprecisely estimated.
+
+The three-state extension adds a more detailed pattern. Equal-weighted XGBoost spreads are positive and statistically significant within LOW and MIDDLE states and negative but statistically insignificant within HIGH states. The largest estimated deterioration occurs between MIDDLE and HIGH volatility. However, the formal pairwise regime tests do not remain significant after Holm multiple-testing adjustment.
+
+The disappearance of the signal under value weighting remains an important qualification. It is consistent with predictive performance being stronger away from the largest firms, although the present analysis does not by itself identify firm size as the causal source of the weighting difference. Smaller-stock strategies may also face implementation frictions beyond those captured by the baseline transaction-cost specification.
+
+Overall, the economic-value evidence supports meaningful state-dependent descriptive variation in the frozen out-of-sample prediction signal, especially for XGBoost under equal weighting. It does not establish that LOW, MIDDLE, and HIGH volatility regimes have statistically distinct expected long--short returns after family-wise multiple-testing correction. This distinction motivates subsequent robustness analysis rather than stronger regime-effect claims.

@@ -1,0 +1,29 @@
+\begin{table}[htbp]
+\centering
+\caption{HAC inference for monthly Spearman information coefficients}
+\label{tab:rank-ic-three-state-inference}
+\small
+\begin{tabular}{llrrrrrr}
+\hline
+Model & Regime & Mean IC & HAC SE & $t$ & $p$ & $N$ & Sig. \\
+\hline
+Elastic Net & LOW & 0.00703 & 0.00868 & 0.81 & 0.4180 & 104 &  \\
+Elastic Net & MIDDLE & 0.01257 & 0.01344 & 0.94 & 0.3494 & 108 &  \\
+Elastic Net & HIGH & -0.01157 & 0.01476 & -0.78 & 0.4330 & 99 &  \\
+XGBoost & LOW & 0.01235 & 0.00760 & 1.63 & 0.1039 & 104 &  \\
+XGBoost & MIDDLE & 0.02129 & 0.01237 & 1.72 & 0.0852 & 108 & * \\
+XGBoost & HIGH & -0.00605 & 0.01397 & -0.43 & 0.6648 & 99 &  \\
+\hline
+\multicolumn{8}{l}{\textit{Panel B: pairwise regime differences (Holm-adjusted inference)}} \\
+Model & Comparison & Difference & HAC SE & $t$ & Raw $p$ & Holm $p$ & Sig. \\
+\hline
+Elastic Net & MIDDLE - LOW & 0.00554 & 0.01547 & 0.36 & 0.7201 & 0.7201 &  \\
+Elastic Net & HIGH - LOW & -0.01861 & 0.01576 & -1.18 & 0.2377 & 0.4754 &  \\
+Elastic Net & HIGH - MIDDLE & -0.02415 & 0.01668 & -1.45 & 0.1476 & 0.4429 &  \\
+XGBoost & MIDDLE - LOW & 0.00894 & 0.01434 & 0.62 & 0.5332 & 0.5332 &  \\
+XGBoost & HIGH - LOW & -0.01841 & 0.01450 & -1.27 & 0.2043 & 0.4086 &  \\
+XGBoost & HIGH - MIDDLE & -0.02734 & 0.01537 & -1.78 & 0.0751 & 0.2254 &  \\
+\hline
+\end{tabular}
+\begin{flushleft}\footnotesize Notes: IC is the monthly cross-sectional Spearman correlation between predicted and realized next-month returns. HAC uses the frozen six-month Newey--West lag. Pairwise p-values are Holm-adjusted within model families.\end{flushleft}
+\end{table}

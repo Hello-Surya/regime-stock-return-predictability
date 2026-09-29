@@ -1,0 +1,36 @@
+\begin{table}[htbp]
+\centering
+\caption{Pairwise volatility-regime differences with HAC inference}
+\label{tab:regime-difference-inference}
+\small
+\begin{tabular}{lllrrrrr}
+\hline
+\multicolumn{8}{l}{\textit{Panel A: $D10-D1$ returns}} \\
+Model & Weight & Comparison & Difference & HAC SE & $t$ & Raw $p$ & Holm $p$ \\
+\hline
+Elastic Net & EW & MIDDLE - LOW & 0.00184 & 0.00546 & 0.34 & 0.7364 & 0.7689 \\
+Elastic Net & EW & HIGH - LOW & -0.00660 & 0.00685 & -0.96 & 0.3352 & 0.7689 \\
+Elastic Net & EW & HIGH - MIDDLE & -0.00844 & 0.00744 & -1.14 & 0.2563 & 0.7689 \\
+Elastic Net & VW & MIDDLE - LOW & -0.00658 & 0.00525 & -1.25 & 0.2104 & 0.6311 \\
+Elastic Net & VW & HIGH - LOW & -0.00595 & 0.00784 & -0.76 & 0.4480 & 0.8960 \\
+Elastic Net & VW & HIGH - MIDDLE & 0.00063 & 0.00875 & 0.07 & 0.9424 & 0.9424 \\
+XGBoost & EW & MIDDLE - LOW & 0.00388 & 0.00547 & 0.71 & 0.4789 & 0.4789 \\
+XGBoost & EW & HIGH - LOW & -0.01045 & 0.00689 & -1.52 & 0.1292 & 0.2584 \\
+XGBoost & EW & HIGH - MIDDLE & -0.01432 & 0.00736 & -1.95 & 0.0516 & 0.1548 \\
+XGBoost & VW & MIDDLE - LOW & -0.00082 & 0.00660 & -0.12 & 0.9012 & 1.0000 \\
+XGBoost & VW & HIGH - LOW & -0.00320 & 0.00861 & -0.37 & 0.7107 & 1.0000 \\
+XGBoost & VW & HIGH - MIDDLE & -0.00238 & 0.00962 & -0.25 & 0.8050 & 1.0000 \\
+\hline
+\multicolumn{8}{l}{\textit{Panel B: monthly Spearman IC}} \\
+Model &  & Comparison & Difference & HAC SE & $t$ & Raw $p$ & Holm $p$ \\
+\hline
+Elastic Net &  & MIDDLE - LOW & 0.00554 & 0.01547 & 0.36 & 0.7201 & 0.7201 \\
+Elastic Net &  & HIGH - LOW & -0.01861 & 0.01576 & -1.18 & 0.2377 & 0.4754 \\
+Elastic Net &  & HIGH - MIDDLE & -0.02415 & 0.01668 & -1.45 & 0.1476 & 0.4429 \\
+XGBoost &  & MIDDLE - LOW & 0.00894 & 0.01434 & 0.62 & 0.5332 & 0.5332 \\
+XGBoost &  & HIGH - LOW & -0.01841 & 0.01450 & -1.27 & 0.2043 & 0.4086 \\
+XGBoost &  & HIGH - MIDDLE & -0.02734 & 0.01537 & -1.78 & 0.0751 & 0.2254 \\
+\hline
+\end{tabular}
+\begin{flushleft}\footnotesize Notes: Differences are estimated as covariance-consistent linear contrasts from LOW-reference three-state regressions. Newey--West/HAC covariance uses six monthly lags. Holm adjustment is applied within each pre-specified three-comparison model/outcome/weighting family; BH/FDR p-values are retained in the CSV outputs.\end{flushleft}
+\end{table}

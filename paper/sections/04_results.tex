@@ -54,6 +54,82 @@ The strongest ranking result is XGBoost in LOW-VIX months. Its mean monthly Spea
 
 The direct LOW-minus-HIGH rank-IC difference is 0.01473 for Elastic Net ($t=1.08$, $p=0.279$) and 0.02045 for XGBoost ($t=1.62$, $p=0.105$). The production evidence therefore shows statistically detectable XGBoost ranking ability within LOW-VIX states, but the direct regime contrast does not reach conventional significance.
 
+\subsection{Three-state volatility-regime rank inference}
+
+The three-state volatility extension divides formation months into LOW, MIDDLE, and HIGH states using expanding historical VIX tercile thresholds. The extension preserves the original binary regime, the frozen out-of-sample predictions, the predictor set, and the model-estimation procedure. Formal monthly inference uses Newey--West heteroskedasticity- and autocorrelation-consistent covariance with the repository's frozen six-month lag.
+
+Table~\ref{tab:rank-ic-three-state-inference} reports within-regime monthly Spearman information coefficients and the corresponding HAC inference.
+
+\begin{table}[htbp]
+\centering
+\caption{Three-state HAC inference for monthly Spearman information coefficients}
+\label{tab:rank-ic-three-state-inference}
+\small
+\begin{tabular}{llrrrrrr}
+\hline
+Model & Regime & Mean IC & HAC SE & $t$ & $p$ & $N$ & Sig. \\
+\hline
+Elastic Net & LOW    &  0.00703 & 0.00868 &  0.81 & 0.4180 & 104 &  \\
+Elastic Net & MIDDLE &  0.01257 & 0.01344 &  0.94 & 0.3494 & 108 &  \\
+Elastic Net & HIGH   & -0.01157 & 0.01476 & -0.78 & 0.4330 &  99 &  \\
+XGBoost     & LOW    &  0.01235 & 0.00760 &  1.63 & 0.1039 & 104 &  \\
+XGBoost     & MIDDLE &  0.02129 & 0.01237 &  1.72 & 0.0852 & 108 & * \\
+XGBoost     & HIGH   & -0.00605 & 0.01397 & -0.43 & 0.6648 &  99 &  \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+Notes: IC is the monthly cross-sectional Spearman correlation between predicted and realized next-month returns. HAC inference uses the frozen six-month Newey--West lag. Significance stars denote $^{***}p<0.01$, $^{**}p<0.05$, and $^{*}p<0.10$.
+\end{flushleft}
+\end{table}
+
+The three-state rank results display meaningful descriptive variation across volatility states, particularly for XGBoost. Its mean monthly Spearman IC is 0.01235 in LOW-volatility months, 0.02129 in MIDDLE-volatility months, and -0.00605 in HIGH-volatility months. The MIDDLE-regime mean is marginally positive at the 10\% level ($t=1.72$, $p=0.0852$). The LOW-regime mean is also positive but does not reach the 10\% threshold ($p=0.1039$), while the HIGH-regime mean is negative and statistically insignificant.
+
+Within-regime significance does not by itself demonstrate that predictive performance differs statistically across regimes. To test regime differences directly, a LOW-reference regression is estimated for each model,
+
+\[
+IC_t
+=
+\alpha
++
+\beta_{\mathrm{MIDDLE}}
+\mathbf{1}\{\mathrm{MIDDLE}_t\}
++
+\beta_{\mathrm{HIGH}}
+\mathbf{1}\{\mathrm{HIGH}_t\}
++
+\varepsilon_t,
+\]
+
+with Newey--West/HAC covariance. The coefficient $\beta_{\mathrm{MIDDLE}}$ estimates MIDDLE minus LOW, $\beta_{\mathrm{HIGH}}$ estimates HIGH minus LOW, and HIGH minus MIDDLE is obtained as a covariance-consistent linear contrast. Holm adjustment is applied across the three pre-specified pairwise comparisons within each model family.
+
+\begin{table}[htbp]
+\centering
+\caption{Three-state rank-IC regime-difference tests}
+\label{tab:rank-ic-regime-differences}
+\small
+\begin{tabular}{llrrrrr}
+\hline
+Model & Comparison & Difference & HAC SE & $t$ & Raw $p$ & Holm $p$ \\
+\hline
+Elastic Net & MIDDLE - LOW  &  0.00554 & 0.01547 &  0.36 & 0.7201 & 0.7201 \\
+Elastic Net & HIGH - LOW    & -0.01861 & 0.01576 & -1.18 & 0.2377 & 0.4754 \\
+Elastic Net & HIGH - MIDDLE & -0.02415 & 0.01668 & -1.45 & 0.1476 & 0.4429 \\
+XGBoost     & MIDDLE - LOW  &  0.00894 & 0.01434 &  0.62 & 0.5332 & 0.5332 \\
+XGBoost     & HIGH - LOW    & -0.01841 & 0.01450 & -1.27 & 0.2043 & 0.4086 \\
+XGBoost     & HIGH - MIDDLE & -0.02734 & 0.01537 & -1.78 & 0.0751 & 0.2254 \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize
+Notes: Differences are covariance-consistent linear contrasts from LOW-reference three-state regressions. Newey--West/HAC covariance uses six monthly lags. Holm adjustment is applied across the three pre-specified comparisons within each model family.
+\end{flushleft}
+\end{table}
+
+For XGBoost, the largest estimated rank-IC contrast is HIGH minus MIDDLE at -0.02734. The raw test gives $t=-1.78$ and $p=0.0751$, but the Holm-adjusted $p$-value is 0.2254. The HIGH-minus-LOW contrast is -0.01841 with a Holm-adjusted $p$-value of 0.4086. Elastic Net likewise shows no statistically significant pairwise contrast.
+
+Accordingly, none of the pre-specified three-state rank-IC differences is statistically distinguishable from zero at the 5\% family-wise level after Holm adjustment. The three-state results therefore show descriptive and suggestive variation in cross-sectional ranking ability across volatility states, but do not establish statistically distinct rank predictability across LOW, MIDDLE, and HIGH regimes.
+
 \subsection{Model interpretation}
 
 The fitted Elastic Net coefficients indicate that book-to-market is the persistent linear predictor. Across monthly production refits, its standardized coefficient is nonzero in approximately 98.4\% of refits, whereas log market equity and momentum are nonzero much less frequently.
@@ -62,4 +138,6 @@ XGBoost uses all three predictors materially. Mean feature-importance shares acr
 
 \subsection{Interpretation}
 
-The production results distinguish return-level forecasting from cross-sectional ranking. OOS $R^2$ remains close to zero, yet XGBoost identifies a statistically positive LOW-VIX ranking signal. This suggests that the economically relevant predictive content is primarily ordinal across stocks rather than a large reduction in individual stock return squared error. The portfolio implications are evaluated in the next section.
+The production results distinguish return-level forecasting from cross-sectional ranking. OOS $R^2$ remains close to zero, yet XGBoost identifies statistically positive ranking ability in the original binary LOW-VIX specification. The three-state extension provides additional evidence that XGBoost rank performance is strongest descriptively in MIDDLE-volatility months and deteriorates in HIGH-volatility months. However, direct three-state contrasts do not remain statistically significant after Holm correction.
+
+The combined evidence therefore suggests that the economically relevant predictive content is primarily ordinal across stocks and varies descriptively with volatility conditions, rather than representing a large reduction in individual-stock return squared error or a formally established difference among volatility regimes. The corresponding portfolio implications are evaluated in the next section.

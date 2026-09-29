@@ -4,7 +4,7 @@ Research software for testing whether next-month U.S. common-stock return predic
 
 ## Current Stage of the Project
 
-The project has completed the **production three-predictor baseline estimation and economic-value evaluation stage**.
+The project has completed the **production three-predictor baseline estimation, economic-value evaluation, three-state volatility extension, and formal HAC regime-inference stage**.
 
 The production data pipeline constructs a leakage-safe monthly CRSP–Compustat–CCM panel using:
 
@@ -57,6 +57,18 @@ The corresponding HIGH-VIX equal-weighted XGBoost portfolio has a net mean month
 The signal does **not** survive value weighting. XGBoost LOW-VIX value-weighted performance is economically small before costs and negative after the 50 bps turnover adjustment. This indicates that the economic signal is concentrated away from the largest stocks.
 
 The direct LOW-minus-HIGH XGBoost equal-weighted net-return difference is 0.846% per month, but the HAC test is not conventionally significant (`t = 1.52`, `p = 0.128`). This qualification is retained in the manuscript.
+
+## Three-State Volatility Inference
+
+The volatility analysis is extended from the original binary LOW/HIGH classification to a LOW/MIDDLE/HIGH specification based on expanding historical VIX terciles. The extension uses the already-frozen out-of-sample predictions and does not retrain the models or alter the original binary regime.
+
+For XGBoost equal-weighted portfolios, mean monthly D10-minus-D1 returns are 0.813% in LOW-volatility months (`p = 0.0013`), 1.201% in MIDDLE-volatility months (`p = 0.0249`), and -0.232% in HIGH-volatility months (`p = 0.7262`).
+
+However, within-regime significance is not sufficient evidence that the regimes differ statistically. Direct Newey--West/HAC regime-difference regressions show that none of the three pairwise XGBoost equal-weighted contrasts remains significant at the 5% family-wise level after the pre-specified Holm adjustment. The HIGH-minus-MIDDLE difference is -1.432 percentage points per month with raw `p = 0.0516` and Holm-adjusted `p = 0.1548`.
+
+Monthly Spearman Rank IC shows a similar descriptive pattern. XGBoost Rank IC is positive in LOW and MIDDLE states and negative in HIGH states, but no pairwise three-state Rank-IC difference survives Holm adjustment.
+
+The three-state results therefore support meaningful descriptive state dependence while stopping short of claiming statistically established differences among LOW, MIDDLE, and HIGH volatility regimes.
 
 ## Interpretation
 

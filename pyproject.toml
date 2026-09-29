@@ -17,6 +17,7 @@ dependencies = [
   "pyarrow>=15.0",
   "matplotlib>=3.8",
   "wrds>=3.2",
+  "statsmodels>=0.14",
 ]
 
 [project.optional-dependencies]
