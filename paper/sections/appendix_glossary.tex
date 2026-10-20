@@ -25,38 +25,38 @@ A historical observation may enter a model fitted for formation month $t$ only w
 
 \paragraph{Market equity (ME).}
 For a CRSP security-month,
-\[
+\begin{equation}
 ME_{i,t}=|P_{i,t}|\times SHROUT_{i,t}.
-\]
+\end{equation}
 Because CRSP shares outstanding are measured in thousands, the core monthly market-equity variable is measured in thousands of U.S. dollars. Log size is
-\[
+\begin{equation}
 \texttt{log\_me}_{i,t}=\log(ME_{i,t}),
-\]
+\end{equation}
 and is defined only for strictly positive market equity.
 
 The variable \texttt{me\_lag} is the previous actual calendar month's market equity. It is constructed on a calendar-complete monthly series, so a missing calendar month produces a missing lag rather than converting the previous observed row into a false one-month lag. Value-weighted portfolios use positive finite \texttt{me\_lag} measured at $t-1$.
 
 \paragraph{Book equity (BE).}
 Stockholders' equity follows the hierarchy \texttt{SEQ}, then \texttt{CEQ + PSTK}, then \texttt{AT - LT}. Preferred stock uses \texttt{PSTKRV}, then \texttt{PSTKL}, then \texttt{PSTK}, with zero used only when all preferred-stock fields are missing. Deferred taxes and investment tax credit use \texttt{TXDITC}, then \texttt{TXDB + ITCB}, with zero when the component is otherwise unavailable. The baseline book-equity definition is
-\[
+\begin{equation}
 BE = SHE + DT - PS,
-\]
+\end{equation}
 where $SHE$ is stockholders' equity, $DT$ is deferred taxes and investment tax credit, and $PS$ is preferred stock. Nonpositive BE does not generate a valid baseline book-to-market observation.
 
 \paragraph{Book-to-market (B/M).}
 For characteristic year $y$,
-\[
+\begin{equation}
 BM_{i,y}=\frac{BE_{i,y-1}}{ME^{Dec}_{i,y-1}}.
-\]
+\end{equation}
 The denominator is complete prior-December firm market equity, converted from CRSP dollar-thousands to millions to match Compustat units. When a firm has multiple valid linked CRSP securities represented in the research universe, their required December market equity is summed at the firm level. If a required linked security lacks December ME, B/M is left missing rather than constructed from an incomplete denominator.
 
 The accounting characteristic associated with a fiscal-year end in calendar year $y-1$ first becomes eligible in June $y$ and remains assigned through May $y+1$. This conservative June convention is enforced explicitly rather than through unrestricted forward filling.
 
 \paragraph{Momentum 12--2.}
 The momentum characteristic compounds monthly returns from $t-12$ through $t-2$:
-\[
+\begin{equation}
 MOM_{i,t}^{12-2}=\prod_{j=2}^{12}(1+R_{i,t-j})-1.
-\]
+\end{equation}
 Month $t-1$ and the formation month $t$ are excluded. Eleven calendar-contiguous historical return observations are required; missing calendar months break the window.
 
 \subsection{VIX volatility regimes}
@@ -64,11 +64,13 @@ Month $t-1$ and the formation month $t$ are excluded. Eleven calendar-contiguous
 Daily Cboe VIX observations are converted to monthly frequency using the final observed VIX close in each calendar month. The original binary baseline uses the expanding median through and including formation month $t$. It is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise; the historical \texttt{regime} label remains this baseline definition.
 
 The three-state extension adds expanding historical tercile thresholds without altering the binary labels. Let $Q_{0.33,t}$ and $Q_{0.67,t}$ denote the 33.33rd and 66.67th percentiles of VIX observations available through and including $t$, computed with the deterministic linear quantile convention. Then
-\[
-\mathrm{LOW}_t: VIX_t\leq Q_{0.33,t},\qquad
-\mathrm{MIDDLE}_t: Q_{0.33,t}<VIX_t\leq Q_{0.67,t},\qquad
+\begin{equation}
+\begin{aligned}
+\mathrm{LOW}_t: VIX_t\leq Q_{0.33,t}, \\
+\mathrm{MIDDLE}_t: Q_{0.33,t}<VIX_t\leq Q_{0.67,t}, \\
 \mathrm{HIGH}_t: VIX_t>Q_{0.67,t}.
-\]
+\end{aligned}
+\end{equation}
 These thresholds evolve through time; future VIX observations and portfolio outcomes never enter their construction. The state at formation month $t$ classifies performance realized at $t+1$. The variables \texttt{vix\_expanding\_q33}, \texttt{vix\_expanding\_q67}, \texttt{regime\_binary}, and \texttt{regime\_3state} make the two definitions explicit.
 
 \subsection{Forecasting models and model selection}
@@ -87,12 +89,12 @@ Model parameters are quantities estimated during fitting; hyperparameters contro
 The production design uses an expanding historical training window and monthly refitting. For every OOS formation month, both models are estimated on all eligible historical observations permitted by the information-timing rules and then predict the current eligible cross-section.
 
 The headline benchmark is the pooled expanding historical mean. At formation month $t$, every stock receives the mean of all next-month returns whose realization dates are observable by $t$. The production OOS coefficient of determination is
-\[
+\begin{equation}
 R^2_{OOS}
 =1-
 \frac{\sum_{i,t}(R_{i,t+1}-\widehat R_{i,t+1})^2}
 {\sum_{i,t}(R_{i,t+1}-\bar R^{\,hist}_{t})^2}.
-\]
+\end{equation}
 A negative $R^2_{OOS}$ means that the model has larger squared forecast error than this historical benchmark over the evaluated observations; it does not mean ``negative accuracy.'' Mean squared error (MSE), root mean squared error (RMSE), mean absolute error (MAE), and prediction--realization correlation are also reported.
 
 \subsection{Cross-sectional ranking and portfolios}
@@ -100,17 +102,17 @@ A negative $R^2_{OOS}$ means that the model has larger squared forecast error th
 The monthly rank information coefficient (IC) is the cross-sectional Spearman correlation between predicted next-month returns formed at $t$ and realized returns at $t+1$. It is computed within each formation month and then summarized through time. Pearson cross-sectional correlation is retained as an additional diagnostic.
 
 For economic-value evaluation, stocks are assigned to ten prediction portfolios within each month and model using tie-preserving percentile ranks. D1 contains the lowest predicted returns and D10 the highest. The long--short return is
-\[
+\begin{equation}
 R^{LS}_{t+1}=R^{D10}_{t+1}-R^{D1}_{t+1}.
-\]
+\end{equation}
 Equal-weighted (EW) portfolios assign equal target weights within each leg. Value-weighted (VW) portfolios use positive finite previous-calendar-month market equity, \texttt{me\_lag}, as the weighting variable.
 
 Turnover is measured after drifting the prior month's portfolio weights through realized security returns. One-way turnover on a leg is one half of the $L_1$ distance between the new target weights and the return-drifted previous weights; a newly initiated leg has turnover one. Total long--short turnover is the sum across the long and short legs.
 
 The frozen transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Therefore,
-\[
+\begin{equation}
 R^{net}_{t+1}=R^{gross}_{t+1}-0.005\times Turnover_{t}.
-\]
+\end{equation}
 
 \subsection{Performance and statistical inference}
 
