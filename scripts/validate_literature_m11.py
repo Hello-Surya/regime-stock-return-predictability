@@ -1,4 +1,4 @@
-"""Static metadata and citation audit for Milestone 11.
+r"""Static metadata and citation audit for Milestone 11.
 
 This script verifies *file consistency*, not the validity of academic conclusions,
 the accuracy of published studies, or independent replication of local WRDS results.
