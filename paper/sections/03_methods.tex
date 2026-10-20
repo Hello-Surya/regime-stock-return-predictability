@@ -3,9 +3,9 @@
 \subsection{Forecasting objective}
 
 For stock $i$ in formation month $t$, the forecasting problem is
-\[
+\begin{equation}
 \widehat{r}_{i,t+1} = f\left(X_{i,t}\right),
-\]
+\end{equation}
 where $X_{i,t}$ contains characteristics observable at the formation date and $r_{i,t+1}$ is the realized next-calendar-month return.
 
 The frozen baseline information set contains three predictors: log market equity, book-to-market, and momentum 12--2. The completed data-construction pipeline attaches these predictors to formation month $t$ using only information allowed by the CRSP market-data timing and the annual accounting convention described in the Data section.
@@ -21,11 +21,13 @@ CCM mappings must be effective on the accounting observation's fiscal-year-end d
 The original baseline volatility specification remains a binary formation-time VIX regime. Let $\widetilde{VIX}_t$ denote the expanding historical median computed through and including formation month $t$. The baseline state is HIGH when $VIX_t>\widetilde{VIX}_t$ and LOW otherwise. The state at $t$ classifies the portfolio whose realized stock returns occur at $t+1$.
 
 As an additional conditional-evaluation specification, the analysis also constructs expanding historical VIX terciles using the same information-set convention. Let $Q_{0.33,t}$ and $Q_{0.67,t}$ denote the 33.33rd and 66.67th percentiles of VIX observations available through and including $t$. The implementation uses NumPy's deterministic linear quantile convention. The three states are
-\[
-\mathrm{LOW}_t:\;VIX_t\leq Q_{0.33,t},\qquad
-\mathrm{MIDDLE}_t:\;Q_{0.33,t}<VIX_t\leq Q_{0.67,t},\qquad
-\mathrm{HIGH}_t:\;VIX_t>Q_{0.67,t}.
-\]
+\begin{equation}
+\begin{aligned}
+\mathrm{LOW}_t: \quad &VIX_t\leq Q_{0.33,t}, \\
+\mathrm{MIDDLE}_t: \quad &Q_{0.33,t}<VIX_t\leq Q_{0.67,t}, \\
+\mathrm{HIGH}_t: \quad &VIX_t>Q_{0.67,t}.
+\end{aligned}
+\end{equation}
 The thresholds evolve through time and never use VIX observations after the formation month. The three-state specification is an extension to, not a replacement for, the original expanding-median binary regime.
 
 \subsection{Elastic Net}
@@ -51,13 +53,13 @@ The final production OOS panel contains 893,486 stock-month predictions across 3
 Forecast accuracy is summarized with mean squared error, root mean squared error, mean absolute error, prediction--realization correlation, and out-of-sample $R^2$.
 
 The production OOS benchmark is the pooled expanding historical mean. At formation month $t$, every stock receives the mean of all historical next-month returns whose realization dates are observable on or before $t$:
-\[
+\begin{equation}
 R^2_{OOS}
 =
 1-
 \frac{\sum_{i,t}(r_{i,t+1}-\widehat r_{i,t+1})^2}
 {\sum_{i,t}(r_{i,t+1}-\bar r^{\,hist}_{t})^2}.
-\]
+\end{equation}
 This benchmark is fixed ex ante and differs from the stock-specific historical mean used in an earlier single-stock validation.
 
 Cross-sectional ranking is evaluated each month using Spearman and Pearson correlations between predicted and realized returns. Mean monthly Spearman information coefficients are tested using Newey--West/HAC standard errors with six monthly lags. Direct LOW-minus-HIGH differences are estimated with a regression of monthly IC on an indicator for the LOW-VIX regime using the same HAC lag length.
