@@ -87,7 +87,7 @@ The three-state rank results display meaningful descriptive variation across vol
 
 Within-regime significance does not by itself demonstrate that predictive performance differs statistically across regimes. To test regime differences directly, a LOW-reference regression is estimated for each model,
 
-\[
+\begin{equation}
 IC_t
 =
 \alpha
@@ -99,7 +99,7 @@ IC_t
 \mathbf{1}\{\mathrm{HIGH}_t\}
 +
 \varepsilon_t,
-\]
+\end{equation}
 
 with Newey--West/HAC covariance. The coefficient $\beta_{\mathrm{MIDDLE}}$ estimates MIDDLE minus LOW, $\beta_{\mathrm{HIGH}}$ estimates HIGH minus LOW, and HIGH minus MIDDLE is obtained as a covariance-consistent linear contrast. Holm adjustment is applied across the three pre-specified pairwise comparisons within each model family.
 
