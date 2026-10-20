@@ -32,6 +32,17 @@ These are candidate editorial domains, **not** claims of current journal accepta
 
 Publication venue selection is **not** yet justified by acceptance rates or editorial claims. Conduct a current author-guide and recent-articles check before final journal selection.
 
+
+### Verified publisher scope sources (accessed 2026-10-20)
+
+- [Journal of Empirical Finance — Elsevier](https://shop.elsevier.com/journals/journal-of-empirical-finance/0927-5398): broad empirical financial economics, including asset pricing and financial econometrics.
+- [Journal of Banking & Finance — Elsevier](https://shop.elsevier.com/journals/journal-of-banking-and-finance/0378-4266): empirical and theoretical work in banking, capital markets and finance.
+- [Quantitative Finance — Taylor & Francis](https://www.tandfonline.com/journals/rquf20): interdisciplinary quantitative theoretical and empirical finance, including financial econometrics and prediction.
+- [Journal of Financial Markets — Elsevier](https://shop.elsevier.com/journals/journal-of-financial-markets/1386-4181): research on securities trading and pricing and market organization; monthly ML may need a substantive market-friction angle.
+- [JFQA — Cambridge University Press](https://www.cambridge.org/core/journals/journal-of-financial-and-quantitative-analysis): theoretical and empirical financial economics including investment and quantitative methods.
+
+These are journal subject scopes, not an indication of probable acceptance. Final author instructions, originality thresholds, required appendices and fees must be rechecked at submission time.
+
 ## Referee objections and proposed answer/evidence
 | Referee question | Does the current work answer it? | Remediation |
 |---|---|---|
