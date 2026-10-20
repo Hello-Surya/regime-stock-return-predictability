@@ -15,9 +15,9 @@ Annual accounting data are obtained from \texttt{comp.funda}. The production ext
 Stockholders' equity is constructed using the hierarchy \texttt{SEQ}, then \texttt{CEQ + PSTK}, and then \texttt{AT - LT}. Preferred stock uses the hierarchy \texttt{PSTKRV}, then \texttt{PSTKL}, and then \texttt{PSTK}; when all preferred-stock fields are missing, preferred stock is explicitly set to zero. Deferred taxes and investment tax credit use \texttt{TXDITC}, with \texttt{TXDB + ITCB} as the fallback; when all such fields are missing, this component is explicitly set to zero.
 
 Book equity is therefore
-\[
+\begin{equation}
 BE = SHE + DT - PS,
-\]
+\end{equation}
 where $SHE$ is stockholders' equity, $DT$ is deferred taxes and investment tax credit, and $PS$ is preferred stock. Nonpositive book equity is retained for data-lineage diagnostics but does not generate a valid baseline book-to-market characteristic.
 
 \subsection{CRSP/Compustat linkage}
@@ -35,9 +35,9 @@ For characteristic year $y$, book equity is paired with CRSP market equity from 
 Where a firm has multiple eligible linked CRSP securities represented in the research universe, the December market-equity denominator is formed at the firm level by summing the required security-level market capitalizations. If a required linked security lacks its December market-equity observation, the denominator is treated as incomplete and book-to-market remains missing.
 
 The baseline characteristic is
-\[
+\begin{equation}
 BM_{i,y} = \frac{BE_{i,y-1}}{ME^{Dec}_{i,y-1}}.
-\]
+\end{equation}
 A valid book-to-market observation requires strictly positive book equity and strictly positive, complete prior-December market equity. No winsorization or trimming is introduced during data construction.
 
 \subsection{Momentum and target}
