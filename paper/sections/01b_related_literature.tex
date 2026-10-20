@@ -40,6 +40,14 @@ for time-varying risk exposures. These studies demonstrate why a
 regularized linear predictor and a nonlinear boosted-tree model provide
 informative benchmarks, but they also establish that neither regularization
 nor nonlinear characteristic modeling is a new methodological invention.
+In particular, Gu, Kelly and Xiu explicitly include a three-variable
+ordinary-least-squares comparator based on size, book-to-market and
+momentum, and compare it with regularized linear and gradient-boosted
+models. Their approximately 1957--2016 monthly stock panel uses an
+1987--2016 out-of-sample period with annual model refits, as opposed
+to the monthly expanding refits of the present project. Thus, using
+these three characteristics alone cannot be represented as an original
+selection of explanatory variables.
 
 Further evidence on flexible factor representations is provided by
 \cite{ChenPelgerZhu2024}. The critical survey of
@@ -179,6 +187,17 @@ a significant LOW-minus-HIGH difference. The direct contrast, its uncertainty,
 and any specified multiple-testing correction must be reported.
 
 Economic evaluation raises further independent challenges.
+More recently, \cite{JensenKellyMalamudPedersen2026} develop an
+implementable efficient frontier in which machine-learning portfolio
+weights are learned with trading costs explicitly incorporated into
+the economic objective. Their research shows why simple forecast-then-
+trade policies can fail to deliver net performance when strategies
+rely on fleeting small-stock characteristics. This is a different
+optimization objective from the current frozen decile portfolios,
+but it establishes that cost-aware investment use of machine learning
+is already a substantial published research area.
+
+
 \cite{NovyMarxVelikov2016} document the economic consequences of trading
 costs across anomalies, while \cite{DeMiguelEtAl2020} analyze the influence
 of transaction costs when exploiting multiple stock characteristics.
