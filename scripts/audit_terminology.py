@@ -48,6 +48,7 @@ ALLOWLIST = {
     "RW",
     "SQL",
     "STD",
+    "STIX",  # Typographic math font, not a research acronym.
     "TEX",
     "TIFF",
     "URL",
