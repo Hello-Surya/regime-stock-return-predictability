@@ -3,7 +3,7 @@
 ## Already established
 - Flexible/nonlinear ML can improve cross-sectional expected-return modeling (Gu–Kelly–Xiu 2020; Freyberger–Neuhierl–Weber 2020; Chen–Pelger–Zhu 2024).
 - Volatility and risk conditions vary over time and matter for return/risk processes (Bekaert–Hoerova 2014; Moreira–Muir 2017).
-- ML investment returns can rely on difficult-to-arbitrage stocks and deteriorate under high volatility, microcap restrictions and costs (Avramov–Cheng–Metzker 2023).
+- ML investment returns can rely on difficult-to-arbitrage stocks and deteriorate under high volatility, microcap restrictions and costs (Avramov–Cheng–Metzker 2023; Jensen–Kelly–Malamud–Pedersen 2026).
 - Economically meaningful anomaly claims must survive trading frictions, value weighting, replication and multiple testing (Novy-Marx–Velikov 2016; Hou–Xue–Zhang 2020; Harvey–Liu–Zhu 2016).
 - Different return targets matter: forecasting the aggregate market equity premium is not equivalent to predicting rankings of **individual stocks**.
 
@@ -20,7 +20,7 @@ This is a **candidate** gap, not an established exclusive discovery; compare det
 - These numbers concern **fixed forecasts evaluated by state**; no separate regime-specific estimator is fitted.
 
 ## Threats
-1. **Priority:** existing state-dependent ML finance research may preempt a broad novelty statement; Avramov et al. especially.
+1. **Priority:** existing state-dependent ML finance research may preempt a broad novelty statement; Avramov et al. especially; Jensen et al. (2026) additionally constrain novelty around cost-aware portfolios.
 2. **Multiplicity:** favorable states, weightings and models may have been inspected before the present formal hypothesis protocol.
 3. **Statistical power:** 104/108/99 state-specific months and temporally clustered uncertainty.
 4. **EW–VW divergence:** dependence on potentially illiquid or microcap names and unmodeled shorting frictions.
