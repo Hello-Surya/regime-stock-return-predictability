@@ -66,9 +66,9 @@ Daily Cboe VIX observations are converted to monthly frequency using the final o
 The three-state extension adds expanding historical tercile thresholds without altering the binary labels. Let $Q_{0.33,t}$ and $Q_{0.67,t}$ denote the 33.33rd and 66.67th percentiles of VIX observations available through and including $t$, computed with the deterministic linear quantile convention. Then
 \begin{equation}
 \begin{aligned}
-\mathrm{LOW}_t: VIX_t\leq Q_{0.33,t}, \\
-\mathrm{MIDDLE}_t: Q_{0.33,t}<VIX_t\leq Q_{0.67,t}, \\
-\mathrm{HIGH}_t: VIX_t>Q_{0.67,t}.
+\mathrm{LOW}_t: \quad &VIX_t\leq Q_{0.33,t}, \\
+\mathrm{MIDDLE}_t: \quad &Q_{0.33,t}<VIX_t\leq Q_{0.67,t}, \\
+\mathrm{HIGH}_t: \quad &VIX_t>Q_{0.67,t}.
 \end{aligned}
 \end{equation}
 These thresholds evolve through time; future VIX observations and portfolio outcomes never enter their construction. The state at formation month $t$ classifies performance realized at $t+1$. The variables \texttt{vix\_expanding\_q33}, \texttt{vix\_expanding\_q67}, \texttt{regime\_binary}, and \texttt{regime\_3state} make the two definitions explicit.
