@@ -2,7 +2,7 @@
 Date: 2026-10-20. Judgment is contingent on full-text literature audit and future tests. A software artifact is not the same as a significant, new or journal-publishable economic finding.
 
 ## Provisional position: proceed but narrow the contribution
-A focused conditional forecasting and economic-implementation study may be defensible if Milestones 12–17 show value beyond the results of Gu–Kelly–Xiu (2020), Freyberger–Neuhierl–Weber (2020), and especially Avramov–Cheng–Metzker (2023). The existing 2000–2025 sample shows positive within-LOW equal-weighted XGBoost net spread returns, but the Holm-adjusted state contrasts are inconclusive and the result vanishes under value weighting. The paper should **not** be described as already demonstrating significant volatility-state heterogeneity or investable profitability.
+A focused conditional forecasting and economic-implementation study may be defensible if Milestones 12–17 show value beyond the results of Gu–Kelly–Xiu (2020), Freyberger–Neuhierl–Weber (2020), and especially Avramov–Cheng–Metzker (2023) and Jensen–Kelly–Malamud–Pedersen (2026). The existing 2000–2025 sample shows positive within-LOW equal-weighted XGBoost net spread returns, but the Holm-adjusted state contrasts are inconclusive and the result vanishes under value weighting. The paper should **not** be described as already demonstrating significant volatility-state heterogeneity or investable profitability.
 
 ## Scorecard: evidence now versus requirements
 | Dimension | Current state | Missing evidence and milestones |
