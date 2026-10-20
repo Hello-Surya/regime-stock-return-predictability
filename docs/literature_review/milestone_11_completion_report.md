@@ -48,7 +48,7 @@ No protected row-level WRDS source data, credentials, private monthly holdings, 
 **Actually performed in connected-repository static audit:**
 - Parsed 38 CSV records with exactly 27 fields per record, with essential identity fields populated.
 - Verified no duplicate CSV paper IDs, BibTeX keys or DOI identifiers.
-- Found 38 unique bibliography entries, 33 citation-key occurrences and 31 distinct cited keys in the new section, with zero unresolved citations relative to the bibliography.
+- Found 38 unique bibliography entries, 34 citation-key occurrences and 32 distinct cited keys in the new section, with zero unresolved citations relative to the bibliography.
 - Confirmed section included from paper/main.tex and simple new section/BibTeX brace counts balanced.
 - Compared committed prior results with narrative; did not rewrite empirical values.
 
