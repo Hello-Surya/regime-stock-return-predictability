@@ -3,7 +3,7 @@
 Prepared 2026-10-20. **Status: integrated documentation on isolated GitHub branch; scientific acceptance and local technical checks PENDING.** The established M1–M10 forecasting and portfolio work was not changed.
 
 ## A. Executive summary
-M11 constructed a 37-study academic bibliography/literature matrix; a literature search protocol, direct-competitor comparison, research-gap analysis, five formal hypotheses, economic mechanisms, three contribution statements, journal-readiness report, evidence map, future milestone mapping, and an explicit retrospective research-transparency protocol. It integrated a new scholarly related-literature/hypotheses section into the pre-existing LaTeX manuscript. Citations have been linked consistently but a complete paper compile and core-paper full-text review remain outstanding.
+M11 constructed a 38-study academic bibliography/literature matrix; a literature search protocol, direct-competitor comparison, research-gap analysis, five formal hypotheses, economic mechanisms, three contribution statements, journal-readiness report, evidence map, future milestone mapping, and an explicit retrospective research-transparency protocol. It integrated a new scholarly related-literature/hypotheses section into the pre-existing LaTeX manuscript. Citations have been linked consistently but a complete paper compile and core-paper full-text review remain outstanding.
 
 ## B. Repository status
 - GitHub source: https://github.com/Hello-Surya/regime-stock-return-predictability
@@ -13,9 +13,9 @@ M11 constructed a 37-study academic bibliography/literature matrix; a literature
 - Local uncommitted Windows changes and ignored licensed files cannot be inspected through the remote GitHub connection.
 
 ## C. Literature coverage
-- **37** matrix studies, **27** columns, **36 published records** (including reviews and a corrigendum) and **1 non-refereed working paper**.
-- **26 priority descriptions** in literature_matrix.md; 11 other documented records.
-- **11 closest or adjacent competitors** in closest_competitors.md.
+- **38** matrix studies, **27** columns, **37 published records** (including reviews and a corrigendum) and **1 non-refereed working paper**.
+- **27 priority descriptions** in literature_matrix.md; 11 other documented records.
+- **12 closest or adjacent competitors** in closest_competitors.md.
 - Covered: characteristics, ML-based pricing, VIX/conditional volatility, cross-sectional versus aggregate targets, conditional model evaluation, market stress, trade friction, microcaps, HAC, and multiple-testing design.
 - Bibliographic identity and abstract-level claims were checked against publisher and scholarly indexes, with inaccessible sample periods, predictor lists, and methods explicitly marked unverified. A full-text review of 15–20 priority articles and exhaustive later-version/priority check **remain incomplete**.
 
@@ -46,9 +46,9 @@ No protected row-level WRDS source data, credentials, private monthly holdings, 
 
 ## H. Validation: actual performed checks versus pending tasks
 **Actually performed in connected-repository static audit:**
-- Parsed 37 CSV records with exactly 27 fields per record, with essential identity fields populated.
+- Parsed 38 CSV records with exactly 27 fields per record, with essential identity fields populated.
 - Verified no duplicate CSV paper IDs, BibTeX keys or DOI identifiers.
-- Found 37 unique bibliography entries, 33 citation-key occurrences and 31 distinct cited keys in the new section, with zero unresolved citations relative to the bibliography.
+- Found 38 unique bibliography entries, 33 citation-key occurrences and 31 distinct cited keys in the new section, with zero unresolved citations relative to the bibliography.
 - Confirmed section included from paper/main.tex and simple new section/BibTeX brace counts balanced.
 - Compared committed prior results with narrative; did not rewrite empirical values.
 
