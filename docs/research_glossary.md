@@ -75,6 +75,12 @@ Implementation-specific statements are governed by current code and frozen confi
 | M8 | Milestone 8 | Frozen three-state portfolio formation stage. | Historical stage marker |
 | M9 | Milestone 9 | Frozen gross HAC statistical inference stage. | Historical stage marker |
 | M10 | Milestone 10 | Turnover and transaction-cost evaluation on frozen M8 portfolios. | Current evaluation stage |
+| M11 | Milestone 11 | Literature search, contribution assessment, formal hypothesis registry and retrospective research-transparency documentation. | Current research-documentation stage |
+| DOI | Digital Object Identifier | Persistent publisher/registry identifier attached to verified academic bibliography records. | M11 citation infrastructure |
+| OLS | Ordinary Least Squares | Standard linear benchmark; Gu–Kelly–Xiu use an OLS-3 size/value/momentum comparator; new benchmark evaluation deferred to M12. | Literature / future benchmark |
+| RQ | Research Question | Explicit question mapped to H1–H5 hypotheses and Milestones 12–18. | M11 research design |
+| SDF | Stochastic Discount Factor | Theoretical pricing object used in several competing conditional ML asset-pricing studies; not an output of our frozen baseline. | M11 literature context |
+| SSRN | Social Science Research Network | Working-paper repository; hosted preprints are distinguished from journal articles. | M11 literature access |
 | SHA | Secure Hash Algorithm | SHA-256 hashes protect frozen inputs against mutation. | Current audit stage |
 
 **Acronym collisions:** CV means cross-validation here, not coefficient of variation. IC means information coefficient in the rank-evaluation context. ME means market equity; BE means book equity.
