@@ -1,6 +1,6 @@
 # Milestone 11 Completion and Verification Report
 
-Prepared 2026-10-20. **Status: integrated documentation on isolated GitHub branch; scientific acceptance and local technical checks PENDING.** The established M1–M10 forecasting and portfolio work was not changed.
+Prepared 2026-10-20. **Status: integrated documentation on isolated GitHub branch; researcher-reported local validation and LaTeX compilation PASSED; full-text scientific review and final acceptance PENDING.** The established M1–M10 forecasting and portfolio work was not changed.
 
 ## A. Executive summary
 M11 constructed a 38-study academic bibliography/literature matrix; a literature search protocol, direct-competitor comparison, research-gap analysis, five formal hypotheses, economic mechanisms, three contribution statements, journal-readiness report, evidence map, future milestone mapping, and an explicit retrospective research-transparency protocol. It integrated a new scholarly related-literature/hypotheses section into the pre-existing LaTeX manuscript. Citations have been linked consistently but a complete paper compile and core-paper full-text review remain outstanding.
@@ -56,14 +56,15 @@ No protected row-level WRDS source data, credentials, private monthly holdings, 
 - Local `scripts/validate_literature_m11.py`: reported PASS (38 matrix records, 27 columns, 38 bibliography entries, 34 manuscript citations).
 - Local complete `pytest -q`: reported 100% pass. Test counts and CI outcomes were not independently inspected in this audit.
 - Local `git diff --check`: completed without reported diagnostics.
-- Local `audit_terminology.py --strict`: initially reported **7 undocumented tokens** (`EN`, `H1`–`H5`, `M1`). These were subsequently documented in `docs/research_glossary.md` on the M11 branch; **the researcher has not yet reported a successful rerun after this patch**.
+- Local `audit_terminology.py --strict`: initially reported **7 undocumented tokens** (`EN`, `H1`–`H5`, `M1`). These were subsequently documented in `docs/research_glossary.md` on the M11 branch; the researcher subsequently reported a **PASS**: 77 documented acronym/alias entries and 0 undocumented terms.
 - The user's working tree had preexisting untracked patch notes and transaction/economic-value data outputs; they were not modified or committed by this branch update.
-- Complete LaTeX build and the priority full-text literature check remain outstanding; this does **not** establish final scientific acceptance.
+- Local MiKTeX 25.12 full four-step build (`pdflatex`, `bibtex`, `pdflatex`, `pdflatex`) **passed**, producing `paper/main.pdf` with 30 pages; the final pass reported no unresolved citations or fatal errors. Nonfatal overfull/underfull boxes remain, including a 12.56 pt overfull paragraph in the new literature section and larger preexisting math/table warnings.
+- The priority full-text literature check remains outstanding; a build success does **not** establish final scientific acceptance.
 
-**NOT executed or verified from the remote read/write environment:**
-- Python validator scripts/validate_literature_m11.py on a local checkout.
-- Full repository pytest suite, strict terminology audit and git diff --check.
-- Real manuscript compilation (pdflatex/bibtex cycles) or external cross-platform build.
+**Not independently executed in the remote read/write environment (researcher supplied local logs):**
+- Python validator scripts/validate_literature_m11.py on a local checkout; researcher-reported PASS.
+- Full repository pytest suite, strict terminology audit and git diff --check; researcher-reported PASS after the glossary fix.
+- Real manuscript compilation (pdflatex/bibtex cycles); researcher-reported PASS with a 30-page PDF. A separate CI/cross-platform build was not performed.
 - Independent WRDS row-level reproduction or scientific re-estimation.
 - Every important paper's full text and the exact passage supporting each literature claim.
 
@@ -91,7 +92,7 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 Pop-Location
 ~~~
-The commands in this block are available to rerun; only the completed checks explicitly described in the local execution evidence above have been reported. The post-patch terminology audit and LaTeX compilation remain unverified.
+The commands in this block are available to rerun; only the completed checks explicitly described in the local execution evidence above have been reported. The researcher subsequently supplied passing local logs for the post-patch terminology audit and the full LaTeX/BibTeX build. Remaining acceptance concerns are scientific full-text verification and cosmetic typesetting warnings.
 
 ## I. Remaining scientific concerns
 Novelty versus Avramov and newer work; strong simple benchmarks not yet compared; direct state tests imprecise after Holm; dependence and broad multiplicity; post-hoc selection of three states; EW/VW divergence; historical VIX proxy and threshold arbitrariness; incomplete borrow/funding/impact costs; microcap exposures; unstable subperiods; observational mechanism ambiguity; and limited licensed-data redistribution.
