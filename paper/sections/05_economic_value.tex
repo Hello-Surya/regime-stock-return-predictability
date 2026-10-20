@@ -114,7 +114,7 @@ Elastic Net equal-weighted performance is weaker. Its LOW-regime mean is 0.486\%
 
 Within-regime significance, however, does not establish that the mean spread differs statistically across volatility states. Direct regime differences are therefore estimated using a LOW-reference regression,
 
-\[
+\begin{equation}
 R^{LS}_t
 =
 \alpha
@@ -126,7 +126,7 @@ R^{LS}_t
 \mathbf{1}\{\mathrm{HIGH}_t\}
 +
 \varepsilon_t,
-\]
+\end{equation}
 
 where $\beta_{\mathrm{MIDDLE}}$ identifies MIDDLE minus LOW, $\beta_{\mathrm{HIGH}}$ identifies HIGH minus LOW, and HIGH minus MIDDLE is obtained using the full HAC covariance matrix. Holm adjustment is applied across the three pre-specified pairwise comparisons separately within each model-by-weighting family.
 
@@ -183,11 +183,11 @@ consumes the frozen month-by-month M8 assignments. The equal-weighted target is 
 value-weighted targets use the previously validated positive lagged market equity of stocks
 in each decile. The current pre-trade portfolio weights are last month's targets drifted
 through the return realized by the current formation date:
-\[
+\begin{equation}
  \widetilde{w}_{i,t}=\frac{w_{i,t-1}(1+R_{i,t})}{\sum_jw_{j,t-1}(1+R_{j,t})},
  \qquad
  T_{d,t}=\frac12\sum_i |w_{i,t}-\widetilde{w}_{i,t}|.
-\]
+\end{equation}
 The first formation from cash has $T_{d,t}=1$. The sum runs over the union of
 old and new holdings, including full liquidations and new purchases. Returns
 $R_{i,t}$ in the drift are the prior formation's observed holding-period returns;
@@ -195,10 +195,10 @@ formation-date forecasts do not depend on their own not-yet-realized $t+1$ retur
 
 The frozen convention is one dollar long in D10 and one dollar short in D1
 (two dollars gross and zero dollars net exposure). With one-way cost $c$ the net spread is
-\[
+\begin{equation}
  R^{LS,\mathrm{net}}_{t+1}=R^{D10}_{t+1}-R^{D1}_{t+1}
  -c\left(T_{D10,t}+T_{D1,t}\right),\qquad c\in\{0,0.005\}.
-\]
+\end{equation}
 The 0-basis-point analysis must exactly reproduce the M8 gross series.
 Both long and short legs incur rebalancing fees; the assumed 50-basis-point
 rate is stylized and omits financing, borrow fees and nonlinear market impact.
