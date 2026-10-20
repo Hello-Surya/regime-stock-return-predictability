@@ -76,6 +76,13 @@ Implementation-specific statements are governed by current code and frozen confi
 | M9 | Milestone 9 | Frozen gross HAC statistical inference stage. | Historical stage marker |
 | M10 | Milestone 10 | Turnover and transaction-cost evaluation on frozen M8 portfolios. | Current evaluation stage |
 | M11 | Milestone 11 | Literature search, contribution assessment, formal hypothesis registry and retrospective research-transparency documentation. | Current research-documentation stage |
+| EN | Elastic Net | Abbreviation for the regularized linear model compared with XGBoost; `EN` in formal contrast notation denotes the unchanged Elastic Net baseline, not a new estimator. | Frozen baseline / M11 hypothesis notation |
+| H1 | Hypothesis 1 — volatility-regime heterogeneity | Candidate null of equal conditional monthly mean IC/portfolio returns across LOW, MIDDLE and HIGH VIX regimes, tested by direct joint/pairwise contrasts. | M11 retrospective hypothesis registry |
+| H2 | Hypothesis 2 — relative nonlinear model performance | Candidate null of equal regime-conditional paired XGBoost-minus-Elastic Net advantage in monthly IC or corresponding loss differences. | M11 hypothesis registry / M12 planned testing |
+| H3 | Hypothesis 3 — net economic value | Tests whether defined net long–short means are positive, separately from direct regime differences and implementable profitability. | M11 retrospective / M15 planned robustness |
+| H4 | Hypothesis 4 — intermediate-volatility peak | Exploratory, post-hoc candidate requiring MIDDLE to exceed both LOW and HIGH in the same prespecified outcome; not prospective confirmation on reviewed data. | M11 exploratory hypothesis / M14, M16 planned work |
+| H5 | Hypothesis 5 — investability survival | Proposed future test of net return predictability after liquidity, microcap and realistic transaction-cost restrictions. | M11 forward research plan / M15 |
+| M1 | Milestone 1 | First stage in this project's earlier research milestone sequence; used only as a historical milestone label, not as a statistical model or test. | Historical stage marker |
 | DOI | Digital Object Identifier | Persistent publisher/registry identifier attached to verified academic bibliography records. | M11 citation infrastructure |
 | OLS | Ordinary Least Squares | Standard linear benchmark; Gu–Kelly–Xiu use an OLS-3 size/value/momentum comparator; new benchmark evaluation deferred to M12. | Literature / future benchmark |
 | RQ | Research Question | Explicit question mapped to H1–H5 hypotheses and Milestones 12–18. | M11 research design |
