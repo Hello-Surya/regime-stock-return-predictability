@@ -39,7 +39,8 @@ try {
     for ($i = 0; $i -lt $steps.Count; $i++) {
         $step = $steps[$i]
         Write-Host ("[{0}/4] Running {1}..." -f ($i + 1), $step.Program)
-        & $step.Program @($step.Arguments)
+        $argsList = [string[]]$step.Arguments
+        & $step.Program @argsList
         if ($LASTEXITCODE -ne 0) {
             throw ("{0} failed with exit code {1}. See paper/main.log and paper/main.blg." -f $step.Program, $LASTEXITCODE)
         }
