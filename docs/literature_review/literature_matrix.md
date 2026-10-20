@@ -186,6 +186,20 @@ John Y. Campbell, Ludger Hentschel (1992), *Journal of Financial Economics*. [Ve
 
 **Relation / novelty audit:** Mechanism background; different outcome. **Outcome:** Aggregate market return; **regime design:** Volatility level continuously modeled. This metadata-level review does not certify that all underlying samples, tests or implementation details are directly comparable.
 
+
+### 27. JensenKellyMalamudPedersen2026 — Machine Learning and the Implementable Efficient Frontier
+
+Theis Ingerslev Jensen, Bryan Kelly, Semyon Malamud and Lasse Heje Pedersen (2026), *The Review of Financial Studies*. [Published article](https://doi.org/10.1093/rfs/hhag022).
+
+**Research question and method:** Rather than generating individual-stock forecasts and mechanically trading them, can a machine-learning allocation strategy be designed to optimize risk-return opportunity sets *after* transaction costs? The authors develop an implementable efficient frontier and a cost-aware portfolio-learning formulation with broad stock characteristics, benchmarking against other machine-learning portfolio policies.
+
+**Dataset and forecasting design:** The paper's main empirical setting uses US NYSE common-stock and CRSP–Compustat characteritics; the full database spans December 1952–December 2020 with out-of-sample portfolio backtests in 1981–2020. The objective is monthly net-of-cost portfolio efficiency rather than the conditional Spearman rank IC of individual stocks.
+
+**Findings and limitations for this study:** Their results show that optimizers based on ML signals can rely heavily on short-lived, small-cap characteristics and incur high trading costs; explicitly learning cost-aware weights improves the implementable efficient frontier. This raises the standard for any claim that a simple 50-bp turnover deduction establishes economic feasibility. The current project does not perform cost-aware portfolio optimization, so the findings are related but **not** direct replications. A VIX-tercile conditional *ranking-and-contrast* contribution would need robust separate evidence.
+
+**Evidence access:** Publisher HTML with abstract and main methods/empirical text and verified institutional record; not every appendix has been inspected.
+
+
 ## Other verified records
 
 - Ivo Welch, Amit Goyal (2008). [A Comprehensive Look at The Empirical Performance of Equity Premium Prediction](https://doi.org/10.1093/rfs/hhm014) — Documents fragile aggregate equity-premium out-of-sample prediction.
