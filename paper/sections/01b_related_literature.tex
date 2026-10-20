@@ -260,10 +260,10 @@ for the final competitor audit and faculty review.
 
 Let $S_t\in\{L,M,H\}$ denote the three-state historical VIX label of
 formation month $t$. For forecasting model $m$ define
-\[
+\begin{equation}
 IC_t^{m}=\mathrm{Spearman}_{i}
  \left(\widehat R_{i,t+1}^{m},R_{i,t+1}\right),
-\]
+\end{equation}
 and let $G_{w,t}^{m}$ and $N_{w,t}^{m}$ respectively denote gross and
 50-basis-point modeled net returns on its $D10-D1$ strategy with
 weighting convention $w\in\{EW,VW\}$. These monthly outcomes are
@@ -273,21 +273,21 @@ training models separately within states.
 \paragraph{H1: Regime heterogeneity.}
 For a declared outcome $Y_t^m$ (starting with monthly rank IC and
 separately considering gross and net portfolio returns), the null is
-\[
+\begin{equation}
 H_{0,1}:\quad
  E[Y_t^m\mid S_t=L]=E[Y_t^m\mid S_t=M]
  =E[Y_t^m\mid S_t=H].
-\]
+\end{equation}
 The two-sided alternative is that at least one conditional mean differs.
 Joint time-series tests and multiplicity-controlled pairwise contrasts,
 rather than isolated within-state significance, address this question.
 
 \paragraph{H2: Relative nonlinear predictive advantage.}
 Let
-\[
+\begin{equation}
 \Delta_r^{IC}
  = E[IC_t^{XGB}-IC_t^{EN}\mid S_t=r].
-\]
+\end{equation}
 The state-heterogeneity null is
 $H_{0,2}:\Delta_L^{IC}=\Delta_M^{IC}=\Delta_H^{IC}$,
 with a corresponding null for aligned monthly forecast-loss
