@@ -52,6 +52,14 @@ No protected row-level WRDS source data, credentials, private monthly holdings, 
 - Confirmed section included from paper/main.tex and simple new section/BibTeX brace counts balanced.
 - Compared committed prior results with narrative; did not rewrite empirical values.
 
+### Local execution evidence supplied by researcher on 2026-10-20
+- Local `scripts/validate_literature_m11.py`: reported PASS (38 matrix records, 27 columns, 38 bibliography entries, 34 manuscript citations).
+- Local complete `pytest -q`: reported 100% pass. Test counts and CI outcomes were not independently inspected in this audit.
+- Local `git diff --check`: completed without reported diagnostics.
+- Local `audit_terminology.py --strict`: initially reported **7 undocumented tokens** (`EN`, `H1`–`H5`, `M1`). These were subsequently documented in `docs/research_glossary.md` on the M11 branch; **the researcher has not yet reported a successful rerun after this patch**.
+- The user's working tree had preexisting untracked patch notes and transaction/economic-value data outputs; they were not modified or committed by this branch update.
+- Complete LaTeX build and the priority full-text literature check remain outstanding; this does **not** establish final scientific acceptance.
+
 **NOT executed or verified from the remote read/write environment:**
 - Python validator scripts/validate_literature_m11.py on a local checkout.
 - Full repository pytest suite, strict terminology audit and git diff --check.
@@ -83,7 +91,7 @@ pdflatex -interaction=nonstopmode -halt-on-error main.tex
 pdflatex -interaction=nonstopmode -halt-on-error main.tex
 Pop-Location
 ~~~
-These are unexecuted local validation commands, **not** a claim that the tests passed.
+The commands in this block are available to rerun; only the completed checks explicitly described in the local execution evidence above have been reported. The post-patch terminology audit and LaTeX compilation remain unverified.
 
 ## I. Remaining scientific concerns
 Novelty versus Avramov and newer work; strong simple benchmarks not yet compared; direct state tests imprecise after Holm; dependence and broad multiplicity; post-hoc selection of three states; EW/VW divergence; historical VIX proxy and threshold arbitrariness; incomplete borrow/funding/impact costs; microcap exposures; unstable subperiods; observational mechanism ambiguity; and limited licensed-data redistribution.
