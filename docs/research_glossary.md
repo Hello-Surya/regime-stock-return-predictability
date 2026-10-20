@@ -69,6 +69,13 @@ Implementation-specific statements are governed by current code and frozen confi
 | CI | Confidence Interval | Interval estimate around a parameter or mean using the current HAC covariance estimator. | Current inference |
 | FDR | False Discovery Rate | Expected proportion of false rejections among rejected hypotheses; controlled secondarily using Benjamini--Hochberg. | Current inference |
 | SE | Standard Error | Estimated sampling uncertainty; current time-series inference uses HAC standard errors. | Current inference |
+| bp / bps | Basis points | One bp equals 0.0001 of capital; frozen 50-bp one-way cost is 0.005. | Current turnover/cost stage |
+| TC | Transaction cost | One-way proportional trading fee charged to one-sided portfolio turnover. | Current turnover/cost stage |
+| L1 | L1 norm | Sum of absolute component differences in portfolio-weight turnover. | Current turnover/cost stage |
+| M8 | Milestone 8 | Frozen three-state portfolio formation stage. | Historical stage marker |
+| M9 | Milestone 9 | Frozen gross HAC statistical inference stage. | Historical stage marker |
+| M10 | Milestone 10 | Turnover and transaction-cost evaluation on frozen M8 portfolios. | Current evaluation stage |
+| SHA | Secure Hash Algorithm | SHA-256 hashes protect frozen inputs against mutation. | Current audit stage |
 
 **Acronym collisions:** CV means cross-validation here, not coefficient of variation. IC means information coefficient in the rank-evaluation context. ME means market equity; BE means book equity.
 
@@ -541,7 +548,7 @@ Highest predicted-return portfolio.
 Return of D10 minus return of D1. A positive realization is a positive spread for that month; it is not automatically evidence of statistical significance or implementable profitability.
 
 ### Tie-preserving decile assignment
-Current production economic-value module uses average percentile ranks and maps those percentiles to deciles, keeping identical predictions in the same portfolio. Intermediate deciles may be empty under large ties, while both extreme legs are required.
+The authoritative Milestone 8 three-state production portfolios sort by prediction and then PERMNO, assigning approximately equal membership to each decile. The earlier baseline economic-value module's average-percentile/tie-preserving rule is a historical, separately defined portfolio implementation and is not used to recompute transaction-cost-stage memberships.
 
 The historical preliminary portfolio module used a different deterministic tie-handling rule and is documented as historical rather than silently rewritten.
 
@@ -762,6 +769,12 @@ The frozen baseline contains exactly three predictors. Additional characteristic
 | portfolio | Prediction decile 1--10 | Economic-value module | t | D1/D10 |
 | gross_long_short_return | D10-D1 before costs | Economic-value module | t+1 | Economic performance |
 | net_long_short_return | Gross spread less turnover cost | Economic-value module | t+1 | Cost-adjusted performance |
+| target_weight | M8 EW/VW target allocation | Frozen assignments and positive lagged ME | t | Turnover and cost |
+| pretrade_weight | Last holdings' return-drifted allocation | M8 prior assignment and observed t return | End of t | Turnover and cost |
+| absolute_weight_change | Absolute target-minus-pretrade change | Union of exiting and entering holdings | t | Audit only |
+| long_short_total_turnover | D10 one-sided turnover plus D1 one-sided turnover | M8 assignment carry-forward | t | Net D10-D1 |
+| long_short_cost | Cost rate times total one-sided notional | 0 / 50-bp assumption | t | Net D10-D1 |
+| D10_minus_D1_net | Frozen gross spread less both leg costs | M8/M10 | t+1 | Net HAC inference |
 
 ## Model Hyperparameter Reference
 
@@ -833,6 +846,47 @@ A tercile divides an ordered distribution into three parts using two percentile 
 
 MIDDLE therefore means an intermediate formation-time VIX state by threshold definition; it does not imply that model or portfolio performance must be numerically intermediate. The three-state regime is used only to condition evaluation of the already-frozen OOS predictions. It is not a model predictor, is not optimized using portfolio outcomes, and does not create separately trained regime-specific models.
 
+
+## Validated Turnover and Trading-Cost Methodology
+
+**Status:** Implemented on the frozen three-state production decile assignments. Actual quantitative findings require a completed local production run; methodology is separate from the older binary-regime cost exercise.
+
+### Basis point (bp, bps)
+One basis point is 0.01 percentage point of capital, equal to 0.0001 in decimal returns. The frozen one-way TC assumption is 50 bps = 0.50% = 0.005. The 0-bps scenario exactly reproduces M8 gross returns.
+
+### Transaction cost (TC) / one-way transaction cost
+A stylized proportional fee applied to traded portfolio notional. It is not a claim that true execution costs equal 50 bps. Financing, borrow fees, short rebates, locate fees and nonlinear market impact are not explicitly included.
+
+### Portfolio rebalancing / turnover / portfolio turnover
+At each formation month t, rebalancing sets the portfolio to the *existing saved* M8 decile assignments. For each **existing long-only leg**, the one-sided turnover is $0.5\sum_i |w^{target}_{i,t}-w^{pretrade}_{i,t}|$, calculated on the union of entering, continuing and exiting PERMNOs; no constituent-count proxy is used. A leg initially formed from cash incurs a turnover of 1.0.
+
+### Target weight
+The desired post-trade portfolio weight. EW is $1/N$ over M8-eligible stocks. VW is positive finite `weighting_variable` (`me_lag`, lagged market equity from t-1) divided by its eligible-decile total. VW does not substitute EW weights for invalid market equity.
+
+### Pre-trade weight / drifted weight
+The weight carried into the current rebalance from the preceding month, adjusted by the return observed during that **preceding holding period**: $w^{pretrade}_{i,t} = w^{target}_{i,t-1}(1+R_{i,t})/\sum_j w^{target}_{j,t-1}(1+R_{j,t})$. Here the saved assignment at t-1 records the realized calendar-t stock return. It is permissible at the end-of-t rebalance; current assignment's realized t+1 return is never used to form turnover at t. Missing or impossible drift returns fail closed.
+
+### Traded notional / gross exposure / net exposure
+`turnover_D10 + turnover_D1` measures **one-sided traded notional per $1 long plus $1 short**, not a rate per $2 gross exposure. The D10-D1 spread carries $2 of gross exposure and zero target net dollar exposure. A one-way 50-bps fee costs `0.005 * (D10_turnover + D1_turnover)` per $1 long-short spread convention.
+
+### Long leg / short leg / self-financing portfolio
+The D10 long leg contributes `D10_gross - D10_cost`. The D1 short leg contributes `-D1_gross - D1_cost`. Thus the combined net strategy return is `D10_gross - D1_gross - D10_cost - D1_cost`. `D1_net` in the M10 monthly output means the **long-only** D1 return after costs, not the short-leg contribution; the latter has a separate explicitly named field.
+
+### Gross return / net return
+Gross D10-D1 retains the exact saved M8 arithmetic D10 minus D1 series; net subtracts costs on both legs. Annualized arithmetic means multiply monthly average by 12. Cumulative spread figures sum monthly returns, following M8, and are not compounded wealth indices.
+
+### Break-even transaction cost
+Descriptive one-way threshold equal to the mean positive gross spread divided by mean long-short one-sided traded notional; results are undefined when average gross is nonpositive or the denominator is invalid.
+
+### Transaction-cost attrition
+Difference between mean gross and mean net monthly spread; an optional attrition ratio divides by the absolute average gross spread only when it is meaningfully nonzero.
+
+### Net HAC inference
+The identical M9 six-lag Newey--West/HAC procedure is applied to the 50-bp net monthly spread: within-state means, LOW-reference dummy regression contrasts (MIDDLE minus LOW, HIGH minus LOW, HIGH minus MIDDLE), raw p-values, primary Holm correction by model/weighting family, and secondary Benjamini--Hochberg FDR p-values. Gross M9 inference is never overwritten.
+
+### Implementation reference
+`scripts/run_transaction_costs.py`, `src/rdsrp/transaction_costs/pipeline.py`, `results/transaction_costs/`, and generated `paper/generated/table_transaction_costs.tex`.
+
 ## Implementation Locations
 
 - CRSP/WRDS extraction: src/rdsrp/data/wrds.py
@@ -862,6 +916,7 @@ MIDDLE therefore means an intermediate formation-time VIX state by threshold def
 | Three-state volatility extension | expanding q33/q67, terciles, MIDDLE, regime_binary, regime_3state, deterministic prediction deciles |
 | Future robustness/extension work | Update when new regimes, predictors, inference, or interpretability methods are implemented |
 | Formal three-state statistical inference | HAC SEs, 95% CIs, t-statistics, p-values, LOW-reference regime-difference regressions, covariance-consistent linear contrasts, Holm family-wise adjustment, and Benjamini--Hochberg FDR diagnostics |
+| Validated turnover and transaction-cost stage | M8 assignment-conserving EW/VW target and drifted pre-trade weights, 0/50-bps one-way costs, both long and short costs, traded notional, net M9 HAC inference, break-even costs, and cost attrition |
 
 ## Terminology Maintenance Requirement
 

@@ -86,6 +86,16 @@ Before completing a future research stage, run the terminology audit and review 
 .\.venv\Scripts\python.exe scripts\audit_terminology.py --strict
 ~~~
 
+<!-- Validated transaction-cost analysis -->
+
+## Turnover and Transaction-Cost Evaluation
+
+The frozen Milestone 8 LOW/MIDDLE/HIGH decile assignments now have a separate, validation-gated turnover and trading-cost analysis. The original forecasts, model tuning, deciles, M8 gross returns, and M9 gross HAC inference are unchanged. EW and VW turnovers are computed separately for D1 and D10 from prior return-drifted holdings, with costs on both long and short legs. The 0-bp case reproduces gross returns; the baseline robustness assumption is 50 bps one way, not a claim about observed execution costs.
+
+Production **net** results, net HAC tests, regime contrasts and figures (generated only after protected-input validation) are in `results/transaction_costs/transaction_cost_summary.md` and `results/transaction_costs/`. For the current primary table see `paper/generated/table_transaction_costs.tex`. This exercise excludes borrow fees, funding costs and nonlinear market impact.
+
+The next research stage is pre-specified **robustness analysis** of alternative volatility classifications, subsamples, eligibility restrictions, predictor treatments, and subperiod stability, without retroactively selecting specifications based on cost-adjusted results.
+
 ## Reproducibility
 
 See `RESEARCH_RUN.md` for Windows/PowerShell commands. The model-ready panel can be revalidated without launching production estimation using:

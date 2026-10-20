@@ -1,0 +1,44 @@
+{
+  "basis_point_definition": "bps / 10000",
+  "drift": "previous formation targets multiplied by 1+previous realized t return, normalized at current t",
+  "first_month": "charge one unit turnover on each cash-financed D1/D10 leg",
+  "git_commit_at_execution": "2021382f4c2dd12370f3025e8000860a9dca4fcb",
+  "gross_M8_reproduced": true,
+  "gross_M9_inference_reproduced": true,
+  "hac_lag": 6,
+  "inference": "M9 statsmodels HAC intercept and LOW-reference regression/contrasts; Holm primary, BH FDR secondary",
+  "long_short_normalization": "$1 D10 long and $1 D1 short; total gross $2; costs .005*(turnover D10+turnover D1)",
+  "matplotlib": "3.11.1",
+  "numpy": "2.4.6",
+  "one_way_turnover": "initial=1; otherwise 0.5*sum(abs(target-pretrade))",
+  "pandas": "2.2.3",
+  "python": "3.11.9",
+  "regimes": {
+    "binary": "formation-time expanding VIX median",
+    "three_state": "formation-time expanding VIX terciles"
+  },
+  "source_hashes_sha256": {
+    "M9_differences": "5e0123b57ead344562e85f4e3dc77c92ed2886fdd4da9a5109b77631fed4d7d2",
+    "M9_inference": "a7d48fcda44b4736c7173cfcf7d28e381154e41949c004b0284a9ed380f9f488",
+    "assignments": "6979c1ba38730d1def2f13d105b0f707ecef5ece3ce26d6e81bbbcef117a0357",
+    "long_short_gross": "d881df6d5f8e24f724f348c8e3eb02e0c6595c5281181afd5a44fc560befa42e",
+    "monthly_gross": "1bc976869a059f8ff5bc0f64fc4eefba78aea60fa2826065bde2dc6829ef38b6",
+    "predictions": "4c98825e137d09940f1c19bf4497b90cf16c9c4ea08b8d8a1777a695cbf8f02f"
+  },
+  "source_paths": {
+    "M9_differences": "results\\inference\\long_short_regime_differences.csv",
+    "M9_inference": "results\\inference\\long_short_hac_inference.csv",
+    "assignments": "results\\economic_value\\portfolio_assignments.csv",
+    "long_short_gross": "results\\economic_value\\long_short_returns.csv",
+    "monthly_gross": "results\\economic_value\\decile_returns_monthly.csv",
+    "predictions": "results\\baseline_models\\baseline_oos_predictions.parquet"
+  },
+  "transaction_cost_bps": [
+    0,
+    50
+  ],
+  "weighting": {
+    "EW": "1/N valid assigned stocks",
+    "VW": "positive finite M8 weighting_variable / eligible decile sum"
+  }
+}

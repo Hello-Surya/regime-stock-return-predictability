@@ -1,0 +1,31 @@
+\begin{table}[htbp]
+\centering
+\caption{Monthly gross versus 50-bp net $D10-D1$ by VIX regime}
+\label{tab:transaction-costs}
+\small
+\begin{tabular}{lllrrrrrrr}
+\hline
+Model & Weight & Regime & Turnover & Gross & Net & HAC SE & $t$ & $p$ & $N$ \\
+\hline
+Elastic Net & EW & OVERALL & 0.256 & 0.0034 & 0.0021 & 0.0032 & 0.66 & 0.5067 & 311 \\
+Elastic Net & EW & HIGH & 0.334 & -0.0017 & -0.0034 & 0.0067 & -0.51 & 0.6130 & 99 \\
+Elastic Net & EW & LOW & 0.176 & 0.0049 & 0.0040 & 0.0028 & 1.43 & 0.1533 & 104 \\
+Elastic Net & EW & MIDDLE & 0.263 & 0.0067 & 0.0054 & 0.0054 & 0.99 & 0.3201 & 108 \\
+Elastic Net & VW & OVERALL & 0.243 & -0.0007 & -0.0020 & 0.0032 & -0.61 & 0.5403 & 311 \\
+Elastic Net & VW & HIGH & 0.371 & -0.0025 & -0.0044 & 0.0073 & -0.60 & 0.5506 & 99 \\
+Elastic Net & VW & LOW & 0.132 & 0.0034 & 0.0028 & 0.0031 & 0.91 & 0.3615 & 104 \\
+Elastic Net & VW & MIDDLE & 0.234 & -0.0031 & -0.0043 & 0.0046 & -0.93 & 0.3503 & 108 \\
+XGBoost & EW & OVERALL & 0.481 & 0.0062 & 0.0037 & 0.0032 & 1.16 & 0.2464 & 311 \\
+XGBoost & EW & HIGH & 0.567 & -0.0023 & -0.0052 & 0.0067 & -0.77 & 0.4388 & 99 \\
+XGBoost & EW & LOW & 0.400 & 0.0081 & 0.0061 & 0.0025 & 2.45 & 0.0143 & 104 \\
+XGBoost & EW & MIDDLE & 0.482 & 0.0120 & 0.0096 & 0.0053 & 1.80 & 0.0714 & 108 \\
+XGBoost & VW & OVERALL & 0.572 & 0.0004 & -0.0025 & 0.0039 & -0.64 & 0.5253 & 311 \\
+XGBoost & VW & HIGH & 0.646 & -0.0015 & -0.0047 & 0.0085 & -0.56 & 0.5783 & 99 \\
+XGBoost & VW & LOW & 0.505 & 0.0017 & -0.0008 & 0.0032 & -0.26 & 0.7964 & 104 \\
+XGBoost & VW & MIDDLE & 0.568 & 0.0009 & -0.0020 & 0.0061 & -0.32 & 0.7476 & 108 \\
+\hline
+\end{tabular}
+\begin{flushleft}
+\footnotesize Notes: 50 basis points per one-sided turnover dollar; turnover is $D10+D1$ rebalancing turnover (initial leg turnover=1). Drift uses prior holding-period returns realized by each formation date. HAC uses six monthly lags. LOW/MIDDLE/HIGH use expanding formation-time VIX terciles.
+\end{flushleft}
+\end{table}

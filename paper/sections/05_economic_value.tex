@@ -1,6 +1,6 @@
 \section{Economic Value}
 
-The production economic-value analysis sorts stocks on out-of-sample predicted next-month returns within each formation month and model. D1 contains the lowest predictions and D10 the highest, and the long--short portfolio is $D10-D1$. Deciles use tie-preserving percentile ranks. Results are computed using equal weights and lagged-market-equity value weights.
+The production economic-value analysis sorts stocks on out-of-sample predicted next-month returns within each formation month and model. D1 contains the lowest predictions and D10 the highest, and the long--short portfolio is $D10-D1$. The frozen three-state deciles use deterministic predicted-return order with PERMNO tie-breaking. Results are computed using equal weights and lagged-market-equity value weights.
 
 The transaction-cost robustness specification charges 50 basis points one way per dollar of turnover. Turnover is measured relative to prior portfolio weights after they are drifted through realized returns.
 
@@ -174,3 +174,35 @@ The three-state extension adds a more detailed pattern. Equal-weighted XGBoost s
 The disappearance of the signal under value weighting remains an important qualification. It is consistent with predictive performance being stronger away from the largest firms, although the present analysis does not by itself identify firm size as the causal source of the weighting difference. Smaller-stock strategies may also face implementation frictions beyond those captured by the baseline transaction-cost specification.
 
 Overall, the economic-value evidence supports meaningful state-dependent descriptive variation in the frozen out-of-sample prediction signal, especially for XGBoost under equal weighting. It does not establish that LOW, MIDDLE, and HIGH volatility regimes have statistically distinct expected long--short returns after family-wise multiple-testing correction. This distinction motivates subsequent robustness analysis rather than stronger regime-effect claims.
+
+% Validated transaction-cost analysis
+\subsection{Trading intensity and cost-adjusted three-state results}
+
+To isolate implementation frictions without re-estimating forecasts, the turnover analysis
+consumes the frozen month-by-month M8 assignments. The equal-weighted target is $1/N_{d,t}$;
+value-weighted targets use the previously validated positive lagged market equity of stocks
+in each decile. The current pre-trade portfolio weights are last month's targets drifted
+through the return realized by the current formation date:
+\[
+ \widetilde{w}_{i,t}=\frac{w_{i,t-1}(1+R_{i,t})}{\sum_jw_{j,t-1}(1+R_{j,t})},
+ \qquad
+ T_{d,t}=\frac12\sum_i |w_{i,t}-\widetilde{w}_{i,t}|.
+\]
+The first formation from cash has $T_{d,t}=1$. The sum runs over the union of
+old and new holdings, including full liquidations and new purchases. Returns
+$R_{i,t}$ in the drift are the prior formation's observed holding-period returns;
+formation-date forecasts do not depend on their own not-yet-realized $t+1$ returns.
+
+The frozen convention is one dollar long in D10 and one dollar short in D1
+(two dollars gross and zero dollars net exposure). With one-way cost $c$ the net spread is
+\[
+ R^{LS,\mathrm{net}}_{t+1}=R^{D10}_{t+1}-R^{D1}_{t+1}
+ -c\left(T_{D10,t}+T_{D1,t}\right),\qquad c\in\{0,0.005\}.
+\]
+The 0-basis-point analysis must exactly reproduce the M8 gross series.
+Both long and short legs incur rebalancing fees; the assumed 50-basis-point
+rate is stylized and omits financing, borrow fees and nonlinear market impact.
+All net-return HAC tests use the original six-lag M9 Newey--West covariance
+and the same LOW-reference pairwise contrasts and Holm testing families.
+
+\input{generated/table_transaction_costs}

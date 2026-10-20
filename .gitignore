@@ -58,3 +58,6 @@ paper/build/
 
 # Row-level three-state portfolio assignments remain local
 results/economic_value/portfolio_assignments.csv
+
+# Restricted row-level turnover holdings audit; never publish
+results/transaction_costs/portfolio_weights_monthly.csv
