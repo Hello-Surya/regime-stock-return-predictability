@@ -6,7 +6,7 @@
 - **Selection:** direct overlap on US individual stocks; rigorous adjacent aggregate-return/volatility methods; foundational characteristic models; portfolio implementability and inference; at least one recent competing working paper.
 - **Exclusions:** untraceable sources, unsupported claims, duplicate preprints where the journal version exists, market commentary and pure trading tutorials. Bonds included only for documented leakage-correction caution; index high-frequency working paper marked as distinct.
 - **Verification rule:** title, author, journal, year, and DOI/verified stable URL from credible landing page. **Abstract verified does not mean full text reviewed**. Missing exact samples and estimator details are flagged in the matrix.
-- **Results:** 37 identified and bibliographically checked records; 1 non-refereed working paper; 36 published records (including a corrigendum and surveys); 26 priority analyses in literature_matrix.md.
+- **Results:** 38 identified and bibliographically checked records; 1 non-refereed working paper; 37 published records (including a corrigendum and surveys); 27 priority analyses in literature_matrix.md.
 - **Limitations:** web discovery is not an exhaustive systematic database harvest; no guaranteed complete Google Scholar or licensed full-text access; publisher metadata describes research but rarely supplies complete data-design details. DOI identifiers used here match the displayed source metadata. A second author-supervised full-text and citation-support audit remains mandatory before journal submission.
 
 ## Queries to reproduce and extend
