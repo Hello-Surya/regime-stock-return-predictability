@@ -111,3 +111,12 @@ Methodology is documented in:
 - the production paper sections under `paper/sections/`.
 
 Licensed WRDS-derived row-level data and generated prediction artifacts remain local and are excluded from Git.
+
+
+## Milestone 11: Literature Positioning and Formal Hypotheses (Research Documentation)
+
+The M11 branch adds a verified-metadata academic literature matrix and BibTeX bibliography; a [related-literature manuscript section](paper/sections/01b_related_literature.tex); [closest-competitor analysis](docs/literature_review/closest_competitors.md); [formal hypothesis registry](docs/literature_review/formal_hypotheses.md); [journal-readiness critique](docs/literature_review/journal_readiness_assessment.md); and a [retrospective-versus-future-analysis protocol](docs/literature_review/research_transparency_protocol.md). A [completion/verification report](docs/literature_review/milestone_11_completion_report.md) separates documentary progress from local software testing and full-text scientific review.
+
+**Scientific boundary:** Published research already connects ML return signals, volatility states, microcaps and trading costs (notably Avramov, Cheng and Metzker, 2023). This study does not claim originality based on that broad conjunction. Three-state Holm-adjusted direct net-return differences are not significant, and current XGBoost net portfolio estimates are negative under value weighting. M11 introduces no new forecasts, altered portfolios, or causal claims.
+
+Re-run static bibliography consistency checks locally with `python scripts/validate_literature_m11.py`, then the standard `pytest` and strict terminology audit before considering a merge.
