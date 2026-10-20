@@ -14,6 +14,7 @@ This comparison is based on verified abstracts and publisher metadata; features 
 | [Hou, Xue, Zhang 2020](https://doi.org/10.1093/rfs/hhy131) | Anomaly portfolios | Not established | No main ML comparison | Microcaps, VW, testing | **Moderate**: provides investability yardstick not new hypothesis |
 | [Novy-Marx, Velikov 2016](https://doi.org/10.1093/rfs/hhv063) | Anomaly portfolios | Not established | Not central | Turnover and transaction costs | **Moderate**: net evaluation alone is not novel |
 | [Daniel, Moskowitz 2016](https://doi.org/10.1016/j.jfineco.2015.12.002) | Momentum-related portfolios | Panic/high volatility | Not same ML comparison | Conditional momentum crashes | **Moderate**: important mechanism confounder |
+| [Fang, Ślepaczuk 2026, SSRN working paper](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6898918) | No — high-frequency Chinese CSI 300 index | Markov-switching and volatility forecasting | XGBoost return prediction | Walk-forward and cost-sensitive evaluation | **Moderate task differentiation**: extremely related *question*, but different asset, frequency and working-paper status |
 | [Bekaert, Hoerova 2014](https://doi.org/10.1016/j.jeconom.2014.05.008) | No — aggregate market | VIX decomposition | Different econometrics | Aggregate return forecasts | **Strong task differentiation** but VIX motivation is established |
 
 ## Referee-facing conclusions
@@ -21,7 +22,7 @@ This comparison is based on verified abstracts and publisher metadata; features 
 
 **Possible bounded contribution:** a pre-visible-information expanding VIX-tercile *evaluation* (not regime-trained models), comparing monthly Spearman IC, forecast-loss differences, formal simultaneous regime contrasts, and identical frozen forecasts' 0/50-bp EW/VW return streams. This becomes meaningful only with strong benchmark, regime-threshold, subperiod, liquidity, factor-risk and alternative-specification evidence.
 
-**No direct-priority claim:** The present search does **not** establish that no earlier paper has the precise same evaluation. “First”, “novel ML methodology”, and “causal influence of VIX” must not appear in the manuscript.
+**No direct-priority claim:** A June 2026 non-refereed paper (Fang–Ślepaczuk) explicitly studies regime-aware XGBoost return prediction, low-volatility concentration and transaction costs for a high-frequency Chinese equity index. The working-paper status and different target should be stated, not ignored. The present search does **not** establish that no earlier paper has the precise same evaluation. “First”, “novel ML methodology”, and “causal influence of VIX” must not appear in the manuscript.
 
 ## Full-text follow-up per competitor
 For each of the ten studies above, record sample dates/frequency, predictors, timing, regimes, OOS design, exact model and inference procedures, cost assumptions, core estimand, working-paper history and table numbers. The present grid checks only assertions explicit in accessible abstracts and metadata; blank/unverified cells are not negative findings.
