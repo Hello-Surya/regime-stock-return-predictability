@@ -904,6 +904,48 @@ The identical M9 six-lag Newey--West/HAC procedure is applied to the 50-bp net m
 - quick configuration: configs/quick.yaml
 - manuscript methods: paper/sections/02_data.tex, 03_methods.tex, 05_economic_value.tex
 
+
+## Milestone 11 — Research Design, Evidence, and Publication Terminology
+
+**Status:** Scientific documentation and retrospective study-positioning terms. Definitions in this section explain the research and do **not** claim that new statistical tests were performed in M11.
+
+### Conditional predictability / market-state dependence
+**General definition:** The distribution or usefulness of forecasts differs across defined information states. **Research use:** Estimate and directly compare conditional monthly IC, model-loss differences, and net D10–D1 means for LOW/MIDDLE/HIGH *formation-time* expanding-VIX-tercile states; the original binary historical-median classification remains separate. **Misunderstanding:** A statistically positive LOW-state mean and an insignificant HIGH-state mean do not establish a significant LOW–HIGH contrast.
+
+### Predictive estimand
+**General definition:** The population characteristic a prediction evaluation is designed to estimate. **Research use:** For monthly outcome Y, μ_r = E[Y_t | S_t=r], with Y stated precisely (rank IC, gross spread, net spread, or paired forecast-loss difference). **Misunderstanding:** OOS R², Spearman IC and net EW spread are different estimands and must not be used interchangeably.
+
+### Forecast comparison and paired losses
+**General definition:** Compare different forecasts on exactly the same realized units using a declared loss or score. **Research use:** Future M12 uses aligned monthly model-loss differences L_EN,t − L_XGB,t (positive means XGB has smaller loss); IC_XGB,t − IC_EN,t has the analogous positive-rank advantage convention. **Misunderstanding:** Comparing independently computed t-statistics for two models is not the same as testing their paired difference, and cross-sectional observations are not independent monthly replicates.
+
+### Statistical significance versus economic significance
+**General definition:** Statistical significance concerns incompatibility of sample evidence with a specified null and inference assumptions; economic significance concerns the practical magnitude and desirability of an effect. **Research use:** HAC tests/intervals accompany regime contrasts, while net EW/VW returns and investability screens qualify economic relevance. **Misunderstanding:** Positive sample net returns under an assumed cost model do not prove executable arbitrage, capital capacity, or a significant difference across states.
+
+### Data snooping / multiple-testing families
+**General definition:** Selecting apparently strong hypotheses, models, samples or specifications after examining outcomes can inflate false-positive claims. **Research use:** Retrospectively record M8–M10 viewed results; in future M12–M17, freeze outcome/family/adjustment choices before running each new exercise, and display null as well as significant findings. The existing M9 primary three-pair comparison family uses Holm adjustment separately by model and weighting. **Misunderstanding:** A correction within three regime pairs does not automatically correct every researcher-selected outcome or portfolio family.
+
+### Structural instability
+**General definition:** Model parameters, predictive relationships or the data-generating process can change over calendar time. **Research use:** M16 will test subperiod and estimation-window sensitivity. **Misunderstanding:** An observational LOW/HIGH VIX difference by itself does not prove a dated structural break.
+
+### Research identification and observational market states
+**General definition:** An identification argument describes what variation supports an estimand or causal assertion. **Research use:** Formation-date VIX states support associational conditional means, not randomized or otherwise causally identified effects. **Misunderstanding:** Higher VIX values are not an exogenous treatment that identifies the causal effect of market uncertainty.
+
+### Confirmatory versus exploratory versus retrospective analyses
+**General definition:** Confirmatory tests require prespecified design and suitable validation; exploratory tests search for patterns; retrospective hypotheses are articulated after observing data. **Research use:** H1–H3 summarize existing findings retrospectively, H4 middle-state peak is explicitly exploratory, and M12–M17 introduce newly documented but not automatically independent tests. **Misunderstanding:** Writing a hypothesis now cannot convert 2000–2025 data previously viewed into an untouched holdout or preregistration.
+
+### Non-monotonic performance
+**General definition:** A performance measure may rise and then fall as volatility categories increase rather than changing in one direction. **Research use:** The descriptive middle-tercile maximum motivates exploratory H4; testing a strict peak requires both MIDDLE−LOW and MIDDLE−HIGH contrasts (and their dependence/multiplicity). **Misunderstanding:** Larger MIDDLE sample mean alone is not proof of a statistically non-monotonic population effect.
+
+### Limits to arbitrage and investability
+**General definition:** Frictions and constraints can prevent theoretical opportunities from being captured at scale. **Research use:** VW failure in M10 motivates later liquidity, microcap, borrow, price-impact and portfolio-capacity checks in M15. **Misunderstanding:** EW–VW performance differences suggest, but do not establish, a microcap or particular liquidity mechanism.
+
+### Publication bias and research transparency
+**General definition:** Favorable findings may receive disproportionate reporting or publication. **Research use:** Keep all model, state, EW/VW and net/gross tests, including uninformative or negative results; record which expectations existed before M11. **Misunderstanding:** A validated code suite does not establish novelty, unbiased literature coverage or acceptance in a journal.
+
+### Literature metadata verification versus full-text verification
+**General definition:** A DOI/publisher abstract can establish bibliographic identity and a high-level finding, while methods, precise sample restrictions and comparative results may require access to the full article. **Research use:** The Milestone 11 CSV flags unverified methodological fields explicitly. **Misunderstanding:** A list of verified DOIs is not itself an exhaustive, full-text-complete systematic review.
+
+
 ## Change Log
 
 | Research stage | Terminology added / updated |
@@ -916,6 +958,7 @@ The identical M9 six-lag Newey--West/HAC procedure is applied to the 50-bp net m
 | Three-state volatility extension | expanding q33/q67, terciles, MIDDLE, regime_binary, regime_3state, deterministic prediction deciles |
 | Future robustness/extension work | Update when new regimes, predictors, inference, or interpretability methods are implemented |
 | Formal three-state statistical inference | HAC SEs, 95% CIs, t-statistics, p-values, LOW-reference regime-difference regressions, covariance-consistent linear contrasts, Holm family-wise adjustment, and Benjamini--Hochberg FDR diagnostics |
+| Milestone 11 literature and hypotheses | Conditional predictability, predictive estimands, model comparisons, statistical versus economic meaning, observational identification, non-monotonic exploratory hypotheses, data snooping and publication transparency |
 | Validated turnover and transaction-cost stage | M8 assignment-conserving EW/VW target and drifted pre-trade weights, 0/50-bps one-way costs, both long and short costs, traded notional, net M9 HAC inference, break-even costs, and cost attrition |
 
 ## Terminology Maintenance Requirement
