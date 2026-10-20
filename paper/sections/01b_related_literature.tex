@@ -1,0 +1,301 @@
+\section{Related Literature, Contribution, and Research Hypotheses}
+\label{sec:related-literature}
+
+This study lies at the intersection of cross-sectional empirical asset pricing,
+nonlinear statistical forecasting, time-varying market conditions, and the
+economics of implementing return predictions. These literatures overlap, but
+they address different questions. Evidence that a model predicts the
+\emph{aggregate} equity premium is not, by itself, evidence that it ranks
+\emph{individual stocks} accurately. Similarly, statistical accuracy,
+cross-sectional rank correlation, gross long--short returns, and investable
+profitability are separate objects. The contribution of the present study must
+be evaluated against all four distinctions.
+
+\subsection{Machine learning and cross-sectional asset pricing}
+\label{subsec:literature-ml}
+
+The empirical asset-pricing literature has long studied how the observable
+characteristics of securities relate to their subsequent returns.
+\cite{FamaFrench1992} identify important cross-sectional associations involving
+size and book-to-market, while \cite{JegadeeshTitman1993} document the
+profitability of intermediate-horizon momentum strategies.
+The common-risk-factor formulation of \cite{FamaFrench1993} motivates a
+distinction between a characteristic's predictive association and its relation
+to systematic risk. Subsequent research on gross profitability and investment
+illustrates the limitations of a specification containing size, value and
+momentum alone \cite{NovyMarx2013,FamaFrench2015}. The three characteristics
+used here are therefore interpretable and historically established, but should
+not be mistaken for a complete information set.
+
+The introduction of flexible prediction methods has shifted attention from
+individual characteristic slopes to high-dimensional and potentially nonlinear
+maps from firm information to expected returns. \cite{GuKellyXiu2020} provide
+a broad comparison of machine-learning methods for empirical asset pricing and
+show the importance of allowing nonlinear interactions among predictors.
+\cite{FreybergerNeuhierlWeber2020} study characteristic selection and
+nonlinearity in a nonparametric framework, while \cite{KozakNagelSantosh2020}
+illustrate the value of economically motivated shrinkage in the cross-section.
+\cite{KellyPruittSu2019} model characteristics as conditioning information
+for time-varying risk exposures. These studies demonstrate why a
+regularized linear predictor and a nonlinear boosted-tree model provide
+informative benchmarks, but they also establish that neither regularization
+nor nonlinear characteristic modeling is a new methodological invention.
+
+Further evidence on flexible factor representations is provided by
+\cite{ChenPelgerZhu2024}. The critical survey of
+\cite{Bagnara2024} highlights the range of regularization, dimension
+reduction, tree and neural-network approaches already applied to asset
+pricing. Thus, comparing Elastic Net with XGBoost should be framed as a
+controlled empirical comparison of two established forecasting families,
+not as the introduction of a new class of forecasting model.
+
+The present design deliberately keeps the characteristic set small.
+The frozen predictors are log market equity, book-to-market, and
+momentum 12--2, and the same sample and formation-time information set are
+used for both models. This restriction makes the model contrast interpretable:
+differences between the two forecasting methods cannot be attributed simply
+to one model receiving additional firm characteristics. However, it also
+means that any apparent nonlinear advantage must be interpreted relative
+to a sparse baseline; important known predictors and stronger simple
+characteristic benchmarks are reserved for explicit robustness analyses.
+
+\subsection{Volatility, market states, and conditional predictability}
+\label{subsec:literature-volatility}
+
+Market volatility summarizes more than a single structural mechanism.
+\cite{BekaertHoerova2014} show that the VIX contains information connected
+to expected variance and variance risk premia. The relation between
+variance risk premia and subsequent aggregate stock-market returns is
+studied by \cite{BollerslevTauchenZhou2009}. These contributions help
+motivate a VIX-based conditioning variable, but their aggregate-return
+outcomes are not identical to individual-stock return rankings.
+A VIX state is also observational: it co-moves with risk perceptions,
+funding conditions, liquidity and the business cycle, and it is not an
+exogenously assigned intervention.
+
+Studies of volatility-managed factor portfolios illustrate that an investor's
+exposure to time-varying volatility may matter even if unconditional factor
+relationships remain the same \cite{MoreiraMuir2017}.
+Momentum provides a particularly relevant example because it belongs to
+the current study's frozen characteristic set:
+\cite{DanielMoskowitz2016} examine momentum crashes associated with
+panic-like market conditions, and \cite{BarrosoSantaClara2015}
+investigate changing momentum risk. A high-volatility forecast-performance
+difference could therefore reflect an interaction between VIX states and
+momentum exposure rather than a general property of nonlinear machine
+learning.
+
+The study uses two historically defined, but conceptually distinct,
+classifications. The original binary LOW/HIGH scheme compares formation-month
+VIX with its expanding historical median. The additional LOW/MIDDLE/HIGH
+evaluation uses expanding historical VIX terciles. Both are calculated using
+information available at portfolio formation, and neither involves fitting
+separate models in each regime. Their thresholds are reproducible empirical
+conventions rather than established structural break points. Consequently,
+alternative VIX thresholds and realized-volatility measures are necessary
+robustness checks before drawing claims about the market-state nature of
+predictability.
+
+\subsection{Conditional nonlinear predictability and closest competing studies}
+\label{subsec:literature-closest}
+
+A major originality challenge is that volatility-dependent machine-learning
+returns and implementation constraints have already been studied directly.
+\cite{AvramovChengMetzker2023} find that investment returns from deep-learning
+signals are concentrated in difficult-to-arbitrage stocks and deteriorate
+when microcapitalization stocks, distressed firms, or high-volatility
+episodes are excluded; turnover and trading costs further reduce
+profitability. This substantially overlaps the motivation of the present
+analysis. It would therefore be incorrect to claim that linking machine
+learning, market volatility, microcaps and transaction costs is itself
+unprecedented.
+
+The current empirical design differs in several more specific dimensions.
+It evaluates historically frozen forecasts from \emph{two} model classes on
+the same three-characteristic information set; partitions the same monthly
+forecast record using historically observable binary and three-state VIX
+classifications; distinguishes stock-level forecast loss from monthly
+cross-sectional rank information; tests \emph{direct} differences between
+regime-conditional means with heteroskedasticity- and
+autocorrelation-consistent inference; and explicitly compares gross and
+cost-adjusted equal- and value-weighted decile-spread portfolios.
+Those design features can improve interpretability. Nevertheless, assembling
+existing methods into one pipeline is not by itself proof of a sufficiently
+distinct journal contribution. That determination requires a full-text
+comparison with competing studies and further empirical evidence that resolves
+a substantive question not already answered.
+
+The literature also warns against attributing all state dependence to
+the model architecture. \cite{KellyPruittSu2019} provide a risk-exposure
+interpretation of time-varying characteristic relations, while
+\cite{DanielMoskowitz2016} highlight the potentially nonlinear downside
+risk embedded in momentum. A model may rank stocks differently because
+its characteristic responses are nonlinear, because the composition of the
+eligible cross-section changes, or because macroeconomic exposures vary by
+state. These explanations should be separated as far as observable data
+permit, but the current design cannot establish a causal channel.
+
+\subsection{Statistical evaluation, economic value, and investment frictions}
+\label{subsec:literature-evaluation}
+
+The evaluation of forecasts requires matching the statistic to the
+research question. Mean squared forecasting error, out-of-sample
+$R^2$, a monthly Spearman rank correlation, and a realized decile spread
+capture different properties of a prediction. Evidence of modest
+out-of-sample improvement for aggregate equity-premium forecasts
+\cite{CampbellThompson2008,WelchGoyal2008,RapachStraussZhou2010}
+provides useful caution about benchmarks and stability, but should not
+be presented as direct evidence about the cross-section of individual
+securities.
+
+Comparing two forecast models on a common set of realized outcomes
+also creates dependence. \cite{DieboldMariano1995} and
+\cite{GiacominiWhite2006} provide influential approaches to comparing
+predictive accuracy and conditional predictive ability, respectively,
+under their stated sampling and estimation assumptions. Those results do
+not license treating hundreds of thousands of stock--month residuals
+as independent test observations. In this paper the formation month is
+the common decision and conditioning unit. Additional model-comparison
+tests will therefore form aligned monthly loss or rank-difference series
+before applying an appropriate dependent-observation inference procedure.
+
+For the existing monthly mean-return, rank-IC and regime-difference analyses,
+the reported framework uses the heteroskedasticity- and
+autocorrelation-consistent covariance estimator associated with
+\cite{NeweyWest1987}. Direct LOW/MIDDLE/HIGH pairwise contrasts
+are evaluated with the family-wise step-down adjustment of
+\cite{Holm1979}; the false-discovery-rate procedure of
+\cite{BenjaminiHochberg1995} is a separately identified secondary
+diagnostic. This distinction is important: a positive within-LOW estimate,
+together with an insignificant within-HIGH estimate, does not constitute
+a significant LOW-minus-HIGH difference. The direct contrast, its uncertainty,
+and any specified multiple-testing correction must be reported.
+
+Economic evaluation raises further independent challenges.
+\cite{NovyMarxVelikov2016} document the economic consequences of trading
+costs across anomalies, while \cite{DeMiguelEtAl2020} analyze the influence
+of transaction costs when exploiting multiple stock characteristics.
+\cite{HouXueZhang2020} emphasize the sensitivity of anomaly evidence
+to replication design, microcaps and statistical testing.
+\cite{HarveyLiuZhu2016} caution that multiple testing complicates
+interpretation of large collections of predictive findings, and
+\cite{McLeanPontiff2016} study attenuation of anomaly returns across
+subsequent and post-publication periods.
+
+The present portfolio analysis sorts next-month predicted returns into
+deciles and evaluates $D10-D1$ with equal and lagged-market-equity value
+weights. The cost-adjusted three-state results are based on portfolio
+turnover from return-drifted holdings and a stipulated one-way cost of
+50 basis points per traded dollar for both long and short legs.
+This is a reproducible \emph{scenario}, not an estimate of actual
+execution, borrowing, financing or market-impact costs. In particular,
+positive modeled net returns are insufficient to establish feasible
+capacity or implementable profitability.
+
+\subsection{Potential research gap and conditional contribution}
+\label{subsec:literature-gap}
+
+Taken together, the preceding studies leave a possible, but not yet
+demonstrated, narrower contribution: a unified assessment of how
+cross-sectional \emph{ranking quality}, \emph{relative model accuracy},
+and \emph{net portfolio value} behave across historically observable
+VIX states when both models use an identical, transparent baseline
+information set and direct regime comparisons are subjected to a common
+inference protocol. The distinction between descriptive within-state
+performance and formal between-state heterogeneity is central.
+
+This framing is deliberately conditional on the results already obtained.
+The production baseline exhibits little overall next-month stock-level
+forecast-error improvement relative to its historical-mean benchmark.
+The original binary classification shows positive rank information and
+a positive modeled net equal-weighted spread for XGBoost in LOW months,
+but direct LOW/HIGH differences remain imprecise.
+In the three-state evaluation, XGBoost's equal-weighted cost-adjusted
+mean spread is approximately $0.614\%$ per month for LOW and
+$0.960\%$ for MIDDLE, compared with $-0.515\%$ for HIGH.
+However, the three-state net pairwise differences do not survive the
+specified Holm adjustment, and the corresponding value-weighted net
+spreads are negative. Thus, the existing results do not establish a
+statistically significant ordering of regimes or economically
+implementable profits. Distinct claims about stronger benchmarks,
+threshold robustness, microcap attribution and interpretation await
+additional analysis.
+
+A negative outcome in those subsequent exercises need not be concealed.
+If state-conditional differences disappear under better benchmarks,
+historically justified volatility thresholds, investability restrictions,
+or robust sample splits, the result would delimit the reliability
+of simple characteristic-based machine-learning strategies. Whether such
+an outcome contributes beyond existing evidence remains a question
+for the final competitor audit and faculty review.
+
+\subsection{Research questions and transparent hypothesis framework}
+\label{subsec:literature-hypotheses}
+
+Let $S_t\in\{L,M,H\}$ denote the three-state historical VIX label of
+formation month $t$. For forecasting model $m$ define
+\[
+IC_t^{m}=\operatorname{Spearman}_{i}
+ \left(\widehat R_{i,t+1}^{m},R_{i,t+1}\right),
+\]
+and let $G_{w,t}^{m}$ and $N_{w,t}^{m}$ respectively denote gross and
+50-basis-point modeled net returns on its $D10-D1$ strategy with
+weighting convention $w\in\{EW,VW\}$. These monthly outcomes are
+evaluated conditional on the formation-month state, not by
+training models separately within states.
+
+\paragraph{H1: Regime heterogeneity.}
+For a declared outcome $Y_t^m$ (starting with monthly rank IC and
+separately considering gross and net portfolio returns), the null is
+\[
+H_{0,1}:\quad
+ E[Y_t^m\mid S_t=L]=E[Y_t^m\mid S_t=M]
+ =E[Y_t^m\mid S_t=H].
+\]
+The two-sided alternative is that at least one conditional mean differs.
+Joint time-series tests and multiplicity-controlled pairwise contrasts,
+rather than isolated within-state significance, address this question.
+
+\paragraph{H2: Relative nonlinear predictive advantage.}
+Let
+\[
+\Delta_r^{IC}
+ = E[IC_t^{XGB}-IC_t^{EN}\mid S_t=r].
+\]
+The state-heterogeneity null is
+$H_{0,2}:\Delta_L^{IC}=\Delta_M^{IC}=\Delta_H^{IC}$,
+with a corresponding null for aligned monthly forecast-loss
+differences, where the loss sign is specified before estimation.
+The relevant object is a \emph{paired} model difference, not
+a comparison of two separately computed significance stars.
+
+\paragraph{H3: Conditional economic value.}
+The observed three-state net equal-weighted LOW XGBoost mean motivates
+an examination of whether the conditional expected modeled net
+$D10-D1$ return is positive and remains so under investability filters.
+A positive sample mean, a statistically nonzero mean, factor-adjusted
+performance and executable profit are not equivalent conclusions.
+Tests already run on the current sample are retrospective evidence.
+
+\paragraph{H4: Intermediate-volatility maximum (exploratory).}
+A peak requires both
+$E[Y_t\mid S_t=M]>E[Y_t\mid S_t=L]$ and
+$E[Y_t\mid S_t=M]>E[Y_t\mid S_t=H]$
+for a predeclared outcome. This possibility arose after the
+three-state results were inspected. It is therefore exploratory, not
+an ex ante confirmatory claim, and requires an appropriately joint
+or simultaneous test plus additional independent evidence.
+
+\paragraph{H5: Investability and stability.}
+Future tests will evaluate whether any positive conditional net
+spread remains after prespecified microcapitalization, liquidity,
+borrow-cost and other implementability restrictions.
+This is a future analysis plan, not established evidence from the
+present cost scenario.
+
+The full hypothesis registry, including estimands, dependence assumptions,
+test families, decision rules, exploratory status and mappings to future
+research milestones, is maintained in the project's Milestone 11
+documentation. All hypotheses are documented after the M1--M10
+results were observed. This section must not be interpreted as
+retrospective preregistration.
