@@ -405,7 +405,7 @@ def _latex_table(table: pd.DataFrame) -> str:
     lines=[r"\begin{table}[htbp]",r"\centering",r"\caption{Monthly gross versus 50-bp net $D10-D1$ by VIX regime}",r"\label{tab:transaction-costs}",r"\small",r"\begin{tabular}{lllrrrrrrr}",r"\hline",r"Model & Weight & Regime & Turnover & Gross & Net & HAC SE & $t$ & $p$ & $N$ \\",r"\hline"]
     for row in table.itertuples(index=False):
         lines.append(f"{row.model} & {row.weighting} & {row.regime} & {row.mean_total_turnover:.3f} & {row.mean_gross_D10_minus_D1:.4f} & {row.mean_net_D10_minus_D1:.4f} & {row.hac_se:.4f} & {row.t_stat:.2f} & {row.p_value:.4f} & {int(row.n_months)} " + r"\\")
-    lines.extend([r"\hline",r"\end{tabular}",r"\begin{flushleft}",r"\footnotesize Notes: 50 basis points per one-sided turnover dollar; turnover is $D10+D1$ rebalancing turnover (initial leg turnover=1). Drift uses prior holding-period returns realized by each formation date. HAC uses six monthly lags. LOW/MIDDLE/HIGH use expanding formation-time VIX terciles.",r"\end{flushleft}",r"\end{table}",""])
+    lines.extend([r"\hline",r"\end{tabular}",r"\begin{flushleft}",r"\small Notes: 50 basis points per one-sided turnover dollar; turnover is $D10+D1$ rebalancing turnover (initial leg turnover=1). Drift uses prior holding-period returns realized by each formation date. HAC uses six monthly lags. LOW/MIDDLE/HIGH use expanding formation-time VIX terciles.",r"\end{flushleft}",r"\end{table}",""])
     return "\n".join(lines)
 
 
